@@ -24,7 +24,7 @@ function FAQ() {
   ];
 
   return (
-    <section className="bg-gray-50 py-20 px-6">
+    <section className="bg-gray-50 py-20 px-6" id="faq">
       <div className="max-w-4xl mx-auto">
 
         {/* Heading */}

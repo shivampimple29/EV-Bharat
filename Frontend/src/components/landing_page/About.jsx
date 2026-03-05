@@ -15,7 +15,7 @@ export default function AboutSection() {
   ];
 
   return (
-    <section className="bg-gray-50 py-28 px-6">
+    <section className="bg-gray-50 py-28 px-6" id="about">
       <div className="max-w-6xl mx-auto text-center">
 
         {/* Heading */}

@@ -35,13 +35,13 @@ function Navbar() {
           className="hidden md:flex items-center gap-8 
                         text-gray-600 font-medium"
         >
-          <a href="#" className="nav-link">
+          <a href="#station-list" className="nav-link">
             Find Stations
           </a>
-          <a href="#" className="nav-link">
+          <a href="#about" className="nav-link">
             About
           </a>
-          <a href="#" className="nav-link">
+          <a href="#faq" className="nav-link">
             FAQ
           </a>
         </div>

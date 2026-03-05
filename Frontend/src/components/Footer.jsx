@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 function Footer() {
   return (
     <footer className="bg-gradient-to-br from-slate-950 to-slate-900 text-gray-300">
@@ -65,14 +67,14 @@ function Footer() {
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white transition">
+                  {/* <a href="#" className="hover:text-white transition">
                     EV Guide
-                  </a>
+                  </a> */}
+                  <Link className="hover:text-white transition" to="/guide">EV Guide</Link>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-white transition">
-                    Charging Tips
-                  </a>
+                
+                  <Link className="hover:text-white transition" to="/charging-tips">Charging Tips</Link>
                 </li>
                 <li>
                   <a href="#" className="hover:text-white transition">
