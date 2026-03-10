@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -52,9 +53,9 @@ function Navbar() {
                            btn-green"
         >
           <span className="px-2">
-            <i className="fa-solid fa-charging-station"></i>
+
           </span>
-          Add Station
+          <Link to='/auth'>Login / Register</Link>
         </button>
 
         {/* Mobile Menu Button */}
