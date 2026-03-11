@@ -33,7 +33,7 @@ const evStationSchema = new mongoose.Schema(
 
     image: {
       type: String,
-      default: "https://via.placeholder.com/600x400?text=EV+Station",
+      default: "/images/ev-station-default.jpeg",
     },
 
     operator: String,
