@@ -5,7 +5,6 @@ import About from "./components/landing_page/About";
 import FAQ from "./components/landing_page/FAQ";
 import Guide from "./components/Footer link/Guide";
 import ChargingTips from "./components/Footer link/ChargingTips";
-
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import StationList from "./components/Stationlist/StationList";
 import StationDetail from "./components/Stationlist/StationDetail";
@@ -18,6 +17,8 @@ import AdminDashboard from "./components/After login/Admin/AdminDashboard";
 import Verification from "./components/After login/Charging Station/Verification";
 import ManageStations from "./components/After login/Admin/ManageStations";
 import ManageUsers from "./components/After login/Admin/ManageUsers";
+
+import NotFound from "./components/NotFound";
 
 function App() {
   return (
@@ -42,7 +43,9 @@ function App() {
           />
           {/* login */}
           <Route path="/auth" element={<Auth />} />
-          <Route path="/stations" element={<StationList />} />
+          <Route path="/stations" element={
+            <StationList />
+            } />
           <Route path="/station/:id" element={<StationDetail />} />
 
           {/* after login charging station */}
@@ -50,35 +53,26 @@ function App() {
           <Route path="/verification" element={<Verification />} />
 
           <Route path="/profile" element={<UserProfile />} />
-          <Route
-            path="/admin-dashboard"
+
+
+          <Route path="/admin-dashboard"
             element={
-              <>
-                <AdminDashboard />
-              </>
+              <><AdminDashboard /></>
             }
           />
           <Route path="/manage-stations" element={<ManageStations />} />
           <Route path="/manage-users" element={<ManageUsers />} />
 
+
+
           {/* Guide Page */}
           <Route path="/guide" element={<Guide />} />
-
           {/* Charging Tips Page */}
           <Route path="/charging-tips" element={<ChargingTips />} />
-
           <Route path="/contact" element={<Contact />} />
-          {/* Add Station */}
-          {/* <Route path="/add-station" element={<AddStation />} /> */}
-
-          {/* Station Details */}
-          {/* <Route path="/station/:id" element={<StationDetail />} /> */}
-
-          {/* Login & Register */}
-          {/* <Route path="/auth" element={<LoginRegister />} /> */}
-
+   
           {/* 404 Page */}
-          {/* <Route path="*" element={<NotFound />} /> */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
         <Footer />
       </BrowserRouter>

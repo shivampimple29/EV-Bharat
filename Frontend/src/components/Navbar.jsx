@@ -32,10 +32,7 @@ function Navbar() {
         </div>
 
         {/* Desktop Links */}
-        <div
-          className="hidden md:flex items-center gap-8 
-                        text-gray-600 font-medium"
-        >
+        <div className="hidden md:flex items-center gap-8 text-gray-600 font-medium">
           <a href="#station-list" className="nav-link">
             Find Stations
           </a>
@@ -52,10 +49,8 @@ function Navbar() {
           className="hidden md:flex 
                            btn-green"
         >
-          <span className="px-2">
-
-          </span>
-          <Link to='/auth'>Login / Register</Link>
+          <span className="px-2"></span>
+          <Link to="/auth">Login / Register</Link>
         </button>
 
         {/* Mobile Menu Button */}
