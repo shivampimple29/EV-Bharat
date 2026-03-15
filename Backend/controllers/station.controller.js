@@ -8,7 +8,7 @@ module.exports.getNearbyStations = async (req, res) => {
     throw new ExpressError(400, "Latitude and longitude are required");
   }
 
-  const limit = 20;
+  const limit = 200;
   const skip = (page - 1) * limit;
 
   const stations = await EVStation.find({
