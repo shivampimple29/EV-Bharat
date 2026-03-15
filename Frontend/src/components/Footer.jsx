@@ -10,10 +10,10 @@ function Footer() {
   ];
 
   const supportLinks = [
-    { label: "Help Center", href: "#", external: true },
+    { label: "Help Center", href: "/HelpCenter", external: true },
     { label: "Contact Us", to: "/contact" },
-    { label: "Privacy Policy", href: "#", external: true },
-    { label: "Terms of Service", href: "#", external: true },
+    { label: "Privacy Policy", href: "/PrivacyPolicy", external: true },
+    { label: "Terms of Service", href: "/TermsOfService", external: true },
     { label: "API Access", href: "#", external: true },
   ];
 

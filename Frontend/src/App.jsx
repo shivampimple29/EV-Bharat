@@ -32,6 +32,9 @@ import ManageUsers from "./components/After login/Admin/ManageUsers";
 import Guide from "./components/Footer link/Guide";
 import ChargingTips from "./components/Footer link/ChargingTips";
 import Contact from "./components/Footer link/Contact";
+import TermsOfService from "./components/Footer link/TermsOfService";
+import PrivacyPolicy from "./components/Footer link/PrivacyPolicy";
+import HelpCenter from "./components/Footer link/HelpCenter";
 
 /* Misc */
 import NotFound from "./components/NotFound";
@@ -49,6 +52,7 @@ function App() {
               <Hero />
               <About />
               <FAQ />
+              
             </main>
           }
         />
@@ -71,6 +75,10 @@ function App() {
         <Route path="/guide" element={<Guide />} />
         <Route path="/charging-tips" element={<ChargingTips />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/TermsOfService" element={<TermsOfService />} />
+        <Route path="/PrivacyPolicy" element={<PrivacyPolicy />} />
+        <Route path="/HelpCenter" element={<HelpCenter />} />
+        
         {/* 404 */}
         <Route path="*" element={<NotFound />} />
       </Routes>
