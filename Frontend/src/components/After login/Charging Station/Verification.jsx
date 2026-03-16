@@ -1,8 +1,14 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 function Verification() {
 
   const navigate = useNavigate();
+    useEffect(() => {
+    window.scrollTo(0, 0);
+    const t = setTimeout(() => setVisible(true), 100);
+    return () => clearTimeout(t);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-6">

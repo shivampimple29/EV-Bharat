@@ -15,6 +15,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 
 function Auth() {
+    useEffect(() => {
+    window.scrollTo(0, 0);
+    const t = setTimeout(() => setVisible(true), 100);
+    return () => clearTimeout(t);
+  }, []);
   const {
     register,
     handleSubmit,

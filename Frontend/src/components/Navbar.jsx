@@ -25,6 +25,7 @@ function Navbar() {
       >
         {/* ── Logo ── */}
         <Link to="/" className="flex items-center gap-3 group">
+    
           <div className="relative">
             {/* Glow */}
             <div

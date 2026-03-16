@@ -26,7 +26,7 @@ function Hero() {
       {/* ── Glows ── */}
       <div className="absolute inset-0
                       bg-[radial-gradient(circle_at_20%_20%,rgba(16,185,129,0.18),transparent_40%)]
-                      pointer-events-none" />
+                      pointer-events-none" id="/" />
       <div className="absolute inset-0
                       bg-[radial-gradient(circle_at_80%_80%,rgba(20,184,166,0.10),transparent_40%)]
                       pointer-events-none" />

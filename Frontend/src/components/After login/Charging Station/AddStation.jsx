@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPlus,
@@ -45,6 +45,12 @@ function AddStation() {
 
     navigate("/verification");
   };
+
+    useEffect(() => {
+    window.scrollTo(0, 0);
+    const t = setTimeout(() => setVisible(true), 100);
+    return () => clearTimeout(t);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-100 flex justify-center items-start py-10 px-4">

@@ -38,6 +38,9 @@ import HelpCenter from "./components/Footer link/HelpCenter";
 
 /* Misc */
 import NotFound from "./components/NotFound";
+import RejectedStation from "./components/After login/Charging Station/RejectedStation";
+import StationApproved from "./components/After login/Charging Station/StationApproved";
+import BookSlot from "./components/After login/User/BookSlot";
 
 function App() {
   return (
@@ -64,9 +67,12 @@ function App() {
         <Route path="/station/:id" element={<StationDetail />} />{" "}
         {/* User */}
         <Route path="/profile" element={<UserProfile />} />
+        <Route path="/book-slot" element={<BookSlot />} />
         {/* Station Management */}
         <Route path="/add-station" element={<AddStation />} />
         <Route path="/verification" element={<Verification />} />
+        <Route path="/station-rejected" element={<RejectedStation/>} />
+        <Route path="/station-verified" element={<StationApproved/>} />
         {/* Admin */}
         <Route path="/admin-dashboard" element={<AdminDashboard />} />
         <Route path="/manage-stations" element={<ManageStations />} />
