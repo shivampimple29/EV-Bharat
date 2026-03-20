@@ -1,27 +1,24 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faScroll, faShieldHalved, faBolt, faUserShield,
   faTriangleExclamation, faCircleCheck, faGavel,
-  faEnvelope, faArrowUp, faChevronDown,
+  faEnvelope, faChevronDown,
 } from "@fortawesome/free-solid-svg-icons";
 
 function TermsOfService() {
   const [visible, setVisible] = useState(false);
   const [openIdx, setOpenIdx] = useState(0);
-  const [showTop, setShowTop] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
     const t = setTimeout(() => setVisible(true), 100);
-    const onScroll = () => setShowTop(window.scrollY > 400);
-    window.addEventListener("scroll", onScroll);
-    return () => { clearTimeout(t); window.removeEventListener("scroll", onScroll); };
+    return () => clearTimeout(t);
   }, []);
 
   const sections = [
     {
-      icon:  faCircleCheck,
+      icon: faCircleCheck,
       title: "Acceptance of Terms",
       short: "By using EV Bharat, you agree to these terms.",
       content: [
@@ -32,7 +29,7 @@ function TermsOfService() {
       ],
     },
     {
-      icon:  faBolt,
+      icon: faBolt,
       title: "Use of the Platform",
       short: "Personal, non-commercial use only.",
       content: [
@@ -43,7 +40,7 @@ function TermsOfService() {
       ],
     },
     {
-      icon:  faUserShield,
+      icon: faUserShield,
       title: "Account Responsibilities",
       short: "You are responsible for your account activity.",
       content: [
@@ -54,7 +51,7 @@ function TermsOfService() {
       ],
     },
     {
-      icon:  faShieldHalved,
+      icon: faShieldHalved,
       title: "User-Generated Content",
       short: "You own your content; we can display it.",
       content: [
@@ -65,7 +62,7 @@ function TermsOfService() {
       ],
     },
     {
-      icon:  faTriangleExclamation,
+      icon: faTriangleExclamation,
       title: "Limitation of Liability",
       short: "Station data is provided as-is.",
       content: [
@@ -76,7 +73,7 @@ function TermsOfService() {
       ],
     },
     {
-      icon:  faScroll,
+      icon: faScroll,
       title: "Privacy & Data",
       short: "We don't sell your data.",
       content: [
@@ -87,7 +84,7 @@ function TermsOfService() {
       ],
     },
     {
-      icon:  faGavel,
+      icon: faGavel,
       title: "Governing Law",
       short: "Indian law applies, courts in Mumbai.",
       content: [
@@ -172,12 +169,12 @@ function TermsOfService() {
                 className={`rounded-2xl border overflow-hidden
                              transition-all duration-500 ease-out
                              ${isOpen
-                               ? "border-emerald-200 shadow-lg shadow-emerald-100/60 bg-white"
-                               : "border-gray-100 bg-white hover:border-emerald-100 hover:shadow-md hover:shadow-emerald-50"
-                             }
+                    ? "border-emerald-200 shadow-lg shadow-emerald-100/60 bg-white"
+                    : "border-gray-100 bg-white hover:border-emerald-100 hover:shadow-md hover:shadow-emerald-50"
+                  }
                              ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"}`}
                 style={{
-                  transitionDelay:    visible ? `${300 + i * 70}ms` : "0ms",
+                  transitionDelay: visible ? `${300 + i * 70}ms` : "0ms",
                   transitionDuration: "600ms",
                 }}>
 
@@ -196,9 +193,9 @@ function TermsOfService() {
                                    text-[10px] font-black
                                    transition-all duration-300
                                    ${isOpen
-                                     ? "bg-gradient-to-br from-emerald-500 to-teal-500 text-white shadow-md shadow-emerald-200"
-                                     : "bg-gray-50 text-gray-400 border border-gray-200"
-                                   }`}>
+                      ? "bg-gradient-to-br from-emerald-500 to-teal-500 text-white shadow-md shadow-emerald-200"
+                      : "bg-gray-50 text-gray-400 border border-gray-200"
+                    }`}>
                     {String(i + 1).padStart(2, "0")}
                   </div>
 
@@ -207,9 +204,9 @@ function TermsOfService() {
                                    flex items-center justify-center
                                    transition-all duration-300
                                    ${isOpen
-                                     ? "bg-emerald-100 text-emerald-600 scale-110"
-                                     : "bg-gray-50 text-gray-400 border border-gray-100"
-                                   }`}>
+                      ? "bg-emerald-100 text-emerald-600 scale-110"
+                      : "bg-gray-50 text-gray-400 border border-gray-100"
+                    }`}>
                     <FontAwesomeIcon icon={section.icon} className="text-xs" />
                   </div>
 
@@ -231,9 +228,9 @@ function TermsOfService() {
                                    flex items-center justify-center
                                    transition-all duration-300
                                    ${isOpen
-                                     ? "bg-emerald-100 text-emerald-600 rotate-180"
-                                     : "bg-gray-50 text-gray-400 border border-gray-100"
-                                   }`}>
+                      ? "bg-emerald-100 text-emerald-600 rotate-180"
+                      : "bg-gray-50 text-gray-400 border border-gray-100"
+                    }`}>
                     <FontAwesomeIcon icon={faChevronDown} className="text-[10px]" />
                   </div>
                 </button>
@@ -249,9 +246,9 @@ function TermsOfService() {
                         <li key={j}
                           className="flex items-start gap-3"
                           style={{
-                            opacity:   isOpen ? 1 : 0,
+                            opacity: isOpen ? 1 : 0,
                             transform: isOpen ? "translateX(0)" : "translateX(-8px)",
-                            transition:`all 0.4s ease ${j * 60}ms`,
+                            transition: `all 0.4s ease ${j * 60}ms`,
                           }}>
                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400
                                            shrink-0 mt-1.5" />
@@ -310,25 +307,7 @@ function TermsOfService() {
             </a>
           </div>
         </div>
-
       </div>
-
-      {/* Scroll to top */}
-      <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        className={`fixed bottom-8 right-8 z-50
-                    w-11 h-11 rounded-full
-                    bg-gradient-to-br from-emerald-500 to-teal-500
-                    text-white shadow-lg shadow-emerald-200
-                    flex items-center justify-center
-                    hover:scale-110 active:scale-95
-                    transition-all duration-300
-                    ${showTop
-                      ? "opacity-100 translate-y-0"
-                      : "opacity-0 translate-y-4 pointer-events-none"
-                    }`}>
-        <FontAwesomeIcon icon={faArrowUp} className="text-xs" />
-      </button>
-
     </div>
   );
 }

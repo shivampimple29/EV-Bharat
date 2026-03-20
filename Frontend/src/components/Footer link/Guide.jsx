@@ -2,7 +2,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faSearch,
   faMapLocationDot,
-  faArrowUp,
   faBolt,
   faPlus,
   faCircleCheck,
@@ -17,20 +16,12 @@ import { useEffect, useRef, useState } from "react";
 function Guide() {
   const [visible, setVisible] = useState(false);
   const [whyVis, setWhyVis] = useState(false);
-  const [showTop, setShowTop] = useState(false);
   const whyRef = useRef(null);
-
- 
 
   useEffect(() => {
     window.scrollTo(0, 0);
     const t = setTimeout(() => setVisible(true), 100);
-    const onScroll = () => setShowTop(window.scrollY > 400);
-    window.addEventListener("scroll", onScroll);
-    return () => {
-      clearTimeout(t);
-      window.removeEventListener("scroll", onScroll);
-    };
+    return () => clearTimeout(t);
   }, []);
 
   useEffect(() => {
@@ -356,24 +347,6 @@ function Guide() {
           </div>
         </div>
       </div>
-      {/* Scroll to top */}
-            <button
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className={`fixed bottom-8 right-8 z-50
-                          w-11 h-11 rounded-full
-                          bg-gradient-to-br from-emerald-500 to-teal-500
-                          text-white shadow-lg shadow-emerald-200
-                          flex items-center justify-center
-                          hover:scale-110 active:scale-95
-                          transition-all duration-300
-                          ${
-                            showTop
-                              ? "opacity-100 translate-y-0"
-                              : "opacity-0 translate-y-4 pointer-events-none"
-                          }`}
-            >
-              <FontAwesomeIcon icon={faArrowUp} className="text-xs" />
-            </button>
     </div>
   );
 }
