@@ -47,8 +47,8 @@ function MapView() {
       setMapLoaded(true);
       try {
         const response = await fetch(
-          `http://localhost:8000/api/stations/nearby?lat=${lat}&lng=${lng}&radius=5000000000`
-        );
+  `http://localhost:8000/api/stations/map`
+);
         const result   = await response.json();
         const stations = result.stations;
         setStationCount(stations.length);
@@ -94,7 +94,7 @@ function MapView() {
               <div style="height:1px;background:#f3f4f6;margin-bottom:12px;"></div>
 
               <button
-                onclick="window.__navigateTo('/station/${station._id}')"
+                onclick="window.__navigateTo('/stations/${station._id}')"
                 style="
                   display:inline-flex;align-items:center;gap:5px;
                   background:linear-gradient(135deg,#10b981,#0d9488);

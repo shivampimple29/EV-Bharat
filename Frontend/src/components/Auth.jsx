@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react"; 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,21 +11,26 @@ import {
   faUser,
   faChevronDown,
   faArrowRight,
-  faUserSecret,
 } from "@fortawesome/free-solid-svg-icons";
 
+import { AuthContext } from "../context/AuthContext";
+
 function Auth() {
-    useEffect(() => {
+
+  useEffect(() => {
     window.scrollTo(0, 0);
     const t = setTimeout(() => setVisible(true), 100);
     return () => clearTimeout(t);
   }, []);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
   const navigate = useNavigate();
+  const { login } = useContext(AuthContext);
+
   const [isLogin, setIsLogin] = useState(true);
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -42,21 +47,27 @@ function Auth() {
       return;
     }
     setLoading(true);
+
     setTimeout(() => {
       setLoading(false);
+
+      //  Save user to context
+      login({ name: data.name || data.email, role: data.role }, "mock-token");
+
       toast.success(isLogin ? "Login Successful!" : "Registration Successful!");
       setTimeout(() => {
-        if (data.role === "user") navigate("/stations");
-        if (data.role === "admin") navigate("/admin-dashboard");
-        if (data.role === "station") navigate("/add-station");
+        if (data.role === "user")          navigate("/stations");
+        if (data.role === "admin")         navigate("/admin");
+        if (data.role === "station_owner") navigate("/add-station");
       }, 1200);
     }, 1500);
   };
 
-  const guestLogin = () => {
-    toast.info("Logged in as Guest");
-    navigate("/stations");
-  };
+  // const guestLogin = () => {
+  //   login({ name: "Guest", role: "user" }, null);
+  //   toast.info("Logged in as Guest");
+  //   navigate("/stations");
+  // };
 
   const inputBase = `w-full bg-gray-50 border border-gray-200 rounded-xl
                      px-4 py-3 pl-11 text-sm text-gray-800
@@ -266,7 +277,7 @@ function Auth() {
                   <option value="">Select Role</option>
                   <option value="user">User</option>
                   <option value="admin">Admin</option>
-                  <option value="station">Charging Station</option>
+                  <option value="station_owner">Station Owner</option>
                 </select>
               </div>
 
@@ -301,16 +312,16 @@ function Auth() {
               </button>
             </form>
 
-            {/* Divider */}
+            {/* Divider
             <div className="flex items-center gap-3 my-5">
               <div className="flex-1 h-px bg-gray-100" />
               <span className="text-gray-400 text-xs font-medium">
                 or continue with
               </span>
               <div className="flex-1 h-px bg-gray-100" />
-            </div>
+            </div> */}
 
-            {/* Google */}
+            {/* Google
             <button
               type="button"
               className="w-full flex items-center justify-center gap-2.5
@@ -329,7 +340,7 @@ function Auth() {
               Sign in with Google
             </button>
 
-            {/* Guest */}
+            Guest
             <button
               type="button"
               onClick={guestLogin}
@@ -343,7 +354,7 @@ function Auth() {
             >
               <FontAwesomeIcon icon={faUserSecret} className="text-xs" />
               Continue as Guest
-            </button>
+            </button> */}
           </div>
         </div>
       </div>

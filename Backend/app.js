@@ -7,6 +7,8 @@ const path = require("path");
 const port = process.env.PORT || 8000;
 
 const stationRoutes = require("./routes/station.routes");
+const authRoutes = require("./routes/auth.routes");
+const userRoutes = require("./routes/user.routes");
 
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -29,7 +31,9 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use("/api/auth",     authRoutes);
 app.use("/api/stations", stationRoutes);
+app.use("/api/users",    userRoutes);
 
 app.use((err, req, res, next) => {
   const { statusCode = 500, message = "Something went wrong" } = err;

@@ -21,8 +21,8 @@ function StationList() {
       setLoading(true);
       try {
         const response = await fetch(
-          `http://localhost:8000/api/stations/nearby?lat=19.076&lng=72.8777&radius=5000000&page=${page}`,
-        );
+  `http://localhost:8000/api/stations?page=${page}`,
+);
         const data = await response.json();
         if (data && data.stations) {
           setStations(data.stations);
@@ -216,7 +216,7 @@ function StationList() {
               >
                 <StationCard
                   station={station}
-                  onClick={() => navigate(`/station/${station._id}`)}
+                  onClick={() => navigate(`/stations/${station._id}`)}
                 />
               </div>
             ))
