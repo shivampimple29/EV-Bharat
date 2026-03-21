@@ -5,17 +5,14 @@ const chargerSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-
   power: {
     type: Number,
     required: true,
   },
-
   totalPorts: {
     type: Number,
     required: true,
   },
-
   availablePorts: {
     type: Number,
     required: true,
@@ -44,16 +41,15 @@ const evStationSchema = new mongoose.Schema(
         enum: ["Point"],
         required: true,
       },
-
       coordinates: {
-        type: [Number],
+        type: [Number],  // [longitude, latitude]
         required: true,
       },
     },
 
     address: {
-      city: String,
-      state: String,
+      city:    String,
+      state:   String,
       country: String,
     },
 
@@ -75,6 +71,8 @@ const evStationSchema = new mongoose.Schema(
     averageRating: {
       type: Number,
       default: 0,
+      min: 0,
+      max: 5,
     },
 
     reviewCount: {
@@ -85,7 +83,7 @@ const evStationSchema = new mongoose.Schema(
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      // ✅ removed required:true — allows seeding without a user
     },
 
     updatedBy: {

@@ -25,6 +25,7 @@ const reviewSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
+      maxlength: 200, 
     },
   },
   { timestamps: true },

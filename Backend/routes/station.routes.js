@@ -6,6 +6,7 @@ const stationController = require("../controllers/station.controller");
 
 router.get("/nearby", wrapAsync(stationController.getNearbyStations));
 router.get("/map", wrapAsync(stationController.getAllStationsForMap));
+router.get("/",       wrapAsync(stationController.getAllStations)); 
 router.get("/:id", wrapAsync(stationController.getStationById));    
 
 
