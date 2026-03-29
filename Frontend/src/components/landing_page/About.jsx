@@ -55,8 +55,9 @@ export default function AboutSection() {
 
   return (
     <section ref={sectionRef}
-      className="bg-gray-50 py-28 px-6 relative overflow-hidden"
-      id="about">
+    id="about"  
+    className="bg-gray-50 py-28 px-6 relative overflow-hidden"
+      >
 
       {/* Bg blobs */}
       <div className="absolute top-0 left-1/4 w-96 h-96

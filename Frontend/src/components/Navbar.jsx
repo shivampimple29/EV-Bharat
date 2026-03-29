@@ -15,6 +15,23 @@ function Navbar() {
   const { user, logout } = useContext(AuthContext);
   const dropdownRef = useRef(null);
 
+  const handleNavClick = (e, link) => {
+    if (link.href.startsWith("/#")) {
+      e.preventDefault();
+      const id = link.href.replace("/#", "");
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth" });
+      } else {
+        // Not on home page yet — navigate then scroll
+        navigate("/");
+        setTimeout(() => {
+          document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+        }, 300);
+      }
+    }
+  };
+
   // Close dropdown on outside click
   useEffect(() => {
     const handler = (e) => {
@@ -27,9 +44,9 @@ function Navbar() {
   }, []);
 
   const navLinks = [
-    { label: "Find Stations", href: "./stations" },
-    { label: "About", href: "./About" },
-    { label: "FAQ", href: "./FAQ" },
+    { label: "Find Stations", href: "/stations" },
+    { label: "About", href: "/#about" },
+    { label: "FAQ", href: "/#faq" },
   ];
 
   const handleLogout = () => {
@@ -67,6 +84,7 @@ function Navbar() {
               <Link
                 key={link.label}
                 to={link.href}
+                onClick={(e) => handleNavClick(e, link)}
                 className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200
                   ${location.pathname === link.href
                     ? "text-emerald-600 bg-emerald-50"
@@ -214,7 +232,7 @@ function Navbar() {
               <Link
                 key={link.label}
                 to={link.href}
-                onClick={() => setIsMenuOpen(false)}
+                onClick={(e) => { handleNavClick(e, link); setIsMenuOpen(false); }}
                 className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium
                            text-gray-600 hover:bg-emerald-50 hover:text-emerald-600
                            transition-all duration-200

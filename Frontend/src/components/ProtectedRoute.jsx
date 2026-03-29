@@ -1,9 +1,10 @@
 import { useContext } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
 function ProtectedRoute({ children, allowedRoles }) {
   const { user, loading } = useContext(AuthContext);
+  const location = useLocation(); 
 
   // Still checking localStorage / fetching user
   if (loading) {
@@ -14,9 +15,9 @@ function ProtectedRoute({ children, allowedRoles }) {
     );
   }
 
-  // Not logged in → go to auth
+  // Not logged in → go to auth (remember where they came from)
   if (!user) {
-    return <Navigate to="/auth" replace />;
+    return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
   // Logged in but wrong role → go home

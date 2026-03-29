@@ -56,8 +56,6 @@ function App() {
       <Routes>
         {/* ── Landing ── */}
         <Route path="/" element={<><Hero /><About /><FAQ /></>} />
-        <Route path="/About" element={<About />} />
-        <Route path="/FAQ" element={<FAQ />} />
 
         {/* ── Auth (public) ── */}
         <Route path="/auth" element={<Auth />} />
@@ -66,12 +64,12 @@ function App() {
         {/* ── Stations (logged in only) ── */}
         <Route path="/stations" element={
           <ProtectedRoute allowedRoles={["station_owner", "admin", "user"]}>
-            <stationList />
+            <StationList />
           </ProtectedRoute>
         } />
         <Route path="/stations/:id" element={
           <ProtectedRoute allowedRoles={["station_owner", "admin", "user"]}>
-            <stationDetail />
+            <StationDetail />
           </ProtectedRoute>
         } />
 

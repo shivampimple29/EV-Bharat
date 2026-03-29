@@ -17,6 +17,10 @@
   }
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 .nav-link {
   @apply bg-gradient-to-t from-emerald-400 to-teal-600 bg-clip-text text-transparent font-semibold transition-all duration-300 hover:brightness-110 hover:scale-105;
 }

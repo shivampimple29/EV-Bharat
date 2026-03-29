@@ -5,6 +5,7 @@ import StationCard from "./StationCard";
 function StationList() {
   const navigate = useNavigate();
 
+
   const [stations, setStations] = useState([]);
   const [filteredStations, setFilteredStations] = useState([]);
   const [search, setSearch] = useState("");
@@ -20,9 +21,15 @@ function StationList() {
     const fetchStations = async () => {
       setLoading(true);
       try {
+        const token = localStorage.getItem("token");
         const response = await fetch(
-  `http://localhost:8000/api/stations?page=${page}`,
-);
+          `http://localhost:8000/api/stations?page=${page}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         const data = await response.json();
         if (data && data.stations) {
           setStations(data.stations);
@@ -110,11 +117,10 @@ function StationList() {
           <div
             className={`relative flex items-center bg-white rounded-xl
                           border transition-all duration-300 ease-in-out shadow-sm
-                          ${
-                            searchFocused
-                              ? "border-emerald-400 shadow-emerald-100 shadow-md"
-                              : "border-gray-200 hover:border-gray-300 hover:shadow-md"
-                          }`}
+                          ${searchFocused
+                ? "border-emerald-400 shadow-emerald-100 shadow-md"
+                : "border-gray-200 hover:border-gray-300 hover:shadow-md"
+              }`}
           >
             {/* Search Icon */}
             <div
@@ -200,11 +206,10 @@ function StationList() {
         {/* Station Cards */}
         <div
           className={`space-y-4 transition-all duration-300
-                         ${
-                           pageTransition
-                             ? "opacity-0 translate-y-2"
-                             : "opacity-100 translate-y-0"
-                         }`}
+                         ${pageTransition
+              ? "opacity-0 translate-y-2"
+              : "opacity-100 translate-y-0"
+            }`}
         >
           {filteredStations.length > 0 ? (
             filteredStations.map((station, index) => (
@@ -314,11 +319,10 @@ function StationList() {
                     onClick={() => handlePageChange(pageNum)}
                     className={`w-9 h-9 rounded-lg text-xs font-bold
                                 transition-all duration-200 active:scale-90
-                                ${
-                                  page === pageNum
-                                    ? "bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-200 scale-105"
-                                    : "bg-white border border-gray-200 text-gray-500 hover:border-emerald-400 hover:text-emerald-600 hover:scale-105"
-                                }`}
+                                ${page === pageNum
+                        ? "bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-200 scale-105"
+                        : "bg-white border border-gray-200 text-gray-500 hover:border-emerald-400 hover:text-emerald-600 hover:scale-105"
+                      }`}
                   >
                     {pageNum}
                   </button>

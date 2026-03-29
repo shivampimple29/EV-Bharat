@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate , useLocation } from "react-router-dom";
 import { useEffect, useState, useContext } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -30,6 +30,7 @@ function Auth() {
     formState: { errors },
   } = useForm();
   const navigate = useNavigate();
+  const location = useLocation();
   const { login } = useContext(AuthContext);
 
   const [isLogin, setIsLogin] = useState(true);
@@ -42,49 +43,52 @@ function Auth() {
     return () => clearTimeout(t);
   }, []);
 
-const onSubmit = async (data) => {
-  if (!data.email || !data.password || !data.role) {
-    toast.error("Please fill all fields");
-    return;
-  }
-
-  setLoading(true);
-  try {
-    const endpoint = isLogin ? "/api/auth/login" : "/api/auth/register";
-    const res = await fetch(`http://localhost:8000${endpoint}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: data.name,
-        email: data.email,
-        password: data.password,
-        phoneNumber: data.phoneNumber,
-        role: data.role,
-      }),
-    });
-
-    const result = await res.json();
-
-    if (!res.ok) {
-      toast.error(result.error || "Something went wrong");
+  const onSubmit = async (data) => {
+    if (!data.email || !data.password || !data.role) {
+      toast.error("Please fill all fields");
       return;
     }
 
-    login(result.user, result.token);
-    toast.success(isLogin ? "Login Successful!" : "Registration Successful!");
+    setLoading(true);
+    try {
+      const endpoint = isLogin ? "/api/auth/login" : "/api/auth/register";
+      const res = await fetch(`http://localhost:8000${endpoint}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: data.name,
+          email: data.email,
+          password: data.password,
+          phoneNumber: data.phoneNumber,
+          role: data.role,
+        }),
+      });
 
-    setTimeout(() => {
-      if (result.user.role === "user")          navigate("/stations");
-      if (result.user.role === "admin")         navigate("/admin");
-      if (result.user.role === "station_owner") navigate("/add-station");
-    }, 1200);
+      const result = await res.json();
 
-  } catch (err) {
-    toast.error("Server error. Please try again.");
-  } finally {
-    setLoading(false);
-  }
-};
+      if (!res.ok) {
+        toast.error(result.error || "Something went wrong");
+        return;
+      }
+
+      login(result.user, result.token);
+      toast.success(isLogin ? "Login Successful!" : "Registration Successful!");
+
+      setTimeout(() => {
+        const from = location.state?.from?.pathname;
+        if (from) return navigate(from, { replace: true });
+        if (result.user.role === "user") navigate("/stations");
+        if (result.user.role === "admin") navigate("/admin");
+        if (result.user.role === "station_owner") navigate("/add-station");
+      }, 1200);
+
+    } catch (err) {
+      toast.error("Server error. Please try again.");
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // const guestLogin = () => {
   //   login({ name: "Guest", role: "user" }, null);
@@ -244,7 +248,7 @@ const onSubmit = async (data) => {
               >
                 <div className="relative">
                   <FontAwesomeIcon
-                    icon={faPhone}  
+                    icon={faPhone}
                     className="absolute left-3.5 top-1/2 -translate-y-1/2
                  text-gray-400 text-xs pointer-events-none"
                   />

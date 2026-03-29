@@ -46,8 +46,9 @@ function FAQ() {
 
   return (
     <section ref={sectionRef}
-      className="bg-gray-50 py-24 px-6 relative overflow-hidden"
-      id="faq">
+    id="faq"  
+    className="bg-gray-50 py-24 px-6 relative overflow-hidden"
+      >
 
       {/* Bg blobs */}
       <div className="absolute top-0 right-1/4 w-80 h-80
