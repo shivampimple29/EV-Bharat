@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState, useContext } from "react"; 
+import { useEffect, useState, useContext } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,6 +11,7 @@ import {
   faUser,
   faChevronDown,
   faArrowRight,
+  faPhone,
 } from "@fortawesome/free-solid-svg-icons";
 
 import { AuthContext } from "../context/AuthContext";
@@ -41,27 +42,49 @@ function Auth() {
     return () => clearTimeout(t);
   }, []);
 
-  const onSubmit = (data) => {
-    if (!data.email || !data.password || !data.role) {
-      toast.error("Please fill all fields");
+const onSubmit = async (data) => {
+  if (!data.email || !data.password || !data.role) {
+    toast.error("Please fill all fields");
+    return;
+  }
+
+  setLoading(true);
+  try {
+    const endpoint = isLogin ? "/api/auth/login" : "/api/auth/register";
+    const res = await fetch(`http://localhost:8000${endpoint}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: data.name,
+        email: data.email,
+        password: data.password,
+        phoneNumber: data.phoneNumber,
+        role: data.role,
+      }),
+    });
+
+    const result = await res.json();
+
+    if (!res.ok) {
+      toast.error(result.error || "Something went wrong");
       return;
     }
-    setLoading(true);
+
+    login(result.user, result.token);
+    toast.success(isLogin ? "Login Successful!" : "Registration Successful!");
 
     setTimeout(() => {
-      setLoading(false);
+      if (result.user.role === "user")          navigate("/stations");
+      if (result.user.role === "admin")         navigate("/admin");
+      if (result.user.role === "station_owner") navigate("/add-station");
+    }, 1200);
 
-      //  Save user to context
-      login({ name: data.name || data.email, role: data.role }, "mock-token");
-
-      toast.success(isLogin ? "Login Successful!" : "Registration Successful!");
-      setTimeout(() => {
-        if (data.role === "user")          navigate("/stations");
-        if (data.role === "admin")         navigate("/admin");
-        if (data.role === "station_owner") navigate("/add-station");
-      }, 1200);
-    }, 1500);
-  };
+  } catch (err) {
+    toast.error("Server error. Please try again.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   // const guestLogin = () => {
   //   login({ name: "Guest", role: "user" }, null);
@@ -122,11 +145,10 @@ function Auth() {
       <div
         className={`relative w-full max-w-md
                        transition-all duration-700 ease-out
-                       ${
-                         visible
-                           ? "opacity-100 translate-y-0 scale-100"
-                           : "opacity-0 translate-y-8 scale-95"
-                       }`}
+                       ${visible
+            ? "opacity-100 translate-y-0 scale-100"
+            : "opacity-0 translate-y-8 scale-95"
+          }`}
       >
         {/* Card glow */}
         <div
@@ -184,11 +206,10 @@ function Auth() {
                   onClick={() => setIsLogin(tab === "Login")}
                   className={`flex-1 py-2 rounded-lg text-sm font-semibold
                               transition-all duration-200
-                              ${
-                                (tab === "Login") === isLogin
-                                  ? "bg-white text-emerald-600 shadow-sm border border-gray-200"
-                                  : "text-gray-400 hover:text-gray-600"
-                              }`}
+                              ${(tab === "Login") === isLogin
+                      ? "bg-white text-emerald-600 shadow-sm border border-gray-200"
+                      : "text-gray-400 hover:text-gray-600"
+                    }`}
                 >
                   {tab}
                 </button>
@@ -212,6 +233,26 @@ function Auth() {
                     placeholder="Full Name"
                     className={inputBase}
                     {...register("name")}
+                  />
+                </div>
+              </div>
+
+              {/* Phone Number — register only */}
+              <div
+                className={`overflow-hidden transition-all duration-400
+               ${!isLogin ? "max-h-24 opacity-100" : "max-h-0 opacity-0"}`}
+              >
+                <div className="relative">
+                  <FontAwesomeIcon
+                    icon={faPhone}  
+                    className="absolute left-3.5 top-1/2 -translate-y-1/2
+                 text-gray-400 text-xs pointer-events-none"
+                  />
+                  <input
+                    type="tel"
+                    placeholder="Phone Number"
+                    className={inputBase}
+                    {...register("phoneNumber")}
                   />
                 </div>
               </div>
