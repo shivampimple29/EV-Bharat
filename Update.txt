@@ -1,11 +1,17 @@
-1. Toster:colour matching to our theam
-2. /station and /station/:id route in protected tag
+updates pennding :
+
+1. Toster:colour matching to our theme
 3. think about search bar in home page 
-4. admin panal-first page layout, other 2 pages , data
+4. admin panel-first page layout, other 2 pages , data
 5.actions reflection on admin pages and add station pages
 6.finding proper logo for website 
 7.In social media inplace of github put instagram
 8.minor change in alignment of footer link 
+
+Done ✅:
+2. /station and /station/:id route in protected tag  
+
+
 
 
 

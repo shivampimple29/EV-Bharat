@@ -27,9 +27,9 @@ function Navbar() {
   }, []);
 
   const navLinks = [
-    { label: "Find Stations", href: "/stations" },
-    { label: "About", href: "/#about" },
-    { label: "FAQ", href: "/#faq" },
+    { label: "Find Stations", href: "./stations" },
+    { label: "About", href: "./About" },
+    { label: "FAQ", href: "./FAQ" },
   ];
 
   const handleLogout = () => {

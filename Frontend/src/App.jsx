@@ -4,7 +4,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Chatbot from "./components/Chatbot";
 import ScrollToTop from "./components/ScrollToTop";
-import ProtectedRoute from "./components/ProtectedRoute";  // ✅
+import ProtectedRoute from "./components/ProtectedRoute"; 
 
 /* Landing */
 import Hero from "./components/landing_page/Hero";
@@ -18,6 +18,7 @@ import Login from "./components/Login";
 /* Stations */
 import StationList from "./components/Stationlist/StationList";
 import StationDetail from "./components/Stationlist/StationDetail";
+
 
 /* User */
 import UserProfile from "./components/After login/User/UserProfile";
@@ -55,6 +56,8 @@ function App() {
       <Routes>
         {/* ── Landing ── */}
         <Route path="/" element={<><Hero /><About /><FAQ /></>} />
+        <Route path="/About" element={<About />} />
+        <Route path="/FAQ" element={<FAQ />} />
 
         {/* ── Auth (public) ── */}
         <Route path="/auth" element={<Auth />} />

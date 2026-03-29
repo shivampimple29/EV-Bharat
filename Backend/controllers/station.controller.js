@@ -82,3 +82,40 @@ module.exports.getAllStations = async (req, res) => {
 
   res.status(200).json({ success: true, page: Number(page), totalPages: Math.ceil(total / limit), results: stations.length, total, stations });
 };
+
+
+// ── CREATE STATION ──
+module.exports.createStation = async (req, res) => {
+  const {
+    name, description, operator,
+    city, state, country,
+    lat, lng,
+    chargers,   // array
+    amenities,  // array
+  } = req.body;
+
+  if (!name || !lat || !lng) {
+    throw new ExpressError(400, "Name, latitude and longitude are required");
+  }
+
+  const station = await EVStation.create({
+    name,
+    description,
+    operator,
+    address: { city, state, country },
+    location: {
+      type: "Point",
+      coordinates: [parseFloat(lng), parseFloat(lat)],
+    },
+    chargers:   chargers   || [],
+    amenities:  amenities  || [],
+    status:     "pending",       // ← always pending until admin approves
+    createdBy:  req.user.id,     // ← from JWT via protect middleware
+  });
+
+  res.status(201).json({
+    success: true,
+    message: "Station submitted for review.",
+    station,
+  });
+};
