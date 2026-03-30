@@ -2,26 +2,26 @@ import { Link } from "react-router-dom";
 
 function Footer() {
   const quickLinks = [
-    { label: "Find Stations", href: "#station-list", external: true },
-    { label: "Add Station", href: "#", external: true },
+    { label: "Find Stations", to: "/stations" },
+    { label: "Add Station", to: "/add-station" },
     { label: "EV Guide", to: "/guide" },
     { label: "Charging Tips", to: "/charging-tips" },
     { label: "Partners", href: "#", external: true },
   ];
 
   const supportLinks = [
-    { label: "Help Center", href: "/HelpCenter", external: true },
+    { label: "Help Center", to: "/help" },
     { label: "Contact Us", to: "/contact" },
-    { label: "Privacy Policy", href: "/PrivacyPolicy", external: true },
-    { label: "Terms of Service", href: "/TermsOfService", external: true },
+    { label: "Privacy Policy", to: "/privacy" },
+    { label: "Terms of Service", to: "/terms" },
     { label: "API Access", href: "#", external: true },
   ];
 
   const socials = [
-    { icon: "fa-brands fa-twitter", label: "Twitter" },
-    { icon: "fa-brands fa-instagram", label: "Instagram" },
-    { icon: "fa-brands fa-linkedin", label: "LinkedIn" },
-    { icon: "fa-regular fa-envelope", label: "Email" },
+    { icon: "fa-brands fa-twitter", label: "Twitter", href: "https://x.com/Ev_Bharat", external: true },
+    { icon: "fa-brands fa-instagram", label: "Instagram", href: "https://www.instagram.com/ev__bharat/", external: true },
+    { icon: "fa-brands fa-linkedin", label: "LinkedIn", href: "https://www.linkedin.com/in/ev-bharat-6343033bb/", external: true },
+    { icon: "fa-regular fa-envelope", label: "Email", href: "https://mail.google.com/mail/?view=cm&to=evbharatindia@gmail.com", external: true },
   ];
 
   return (
@@ -88,20 +88,23 @@ function Footer() {
             {/* Social icons */}
             <div className="flex items-center justify-center lg:justify-start gap-2.5">
               {socials.map((s) => (
-                <button
+                <a
                   key={s.label}
+                  href={s.href}
+                  target="_blank"
+                  rel="noreferrer"
                   aria-label={s.label}
                   className="w-9 h-9 rounded-xl
-                             bg-slate-800 border border-slate-700/60
-                             flex items-center justify-center
-                             text-gray-400
-                             hover:bg-emerald-500/10 hover:border-emerald-500/30
-                             hover:text-emerald-400 hover:scale-110
-                             active:scale-95
-                             transition-all duration-200"
+                 bg-slate-800 border border-slate-700/60
+                 flex items-center justify-center
+                 text-gray-400
+                 hover:bg-emerald-500/10 hover:border-emerald-500/30
+                 hover:text-emerald-400 hover:scale-110
+                 active:scale-95
+                 transition-all duration-200"
                 >
                   <i className={`${s.icon} text-sm`} />
-                </button>
+                </a>
               ))}
             </div>
           </div>
