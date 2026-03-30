@@ -1,124 +1,121 @@
-import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faCircleExclamation,
-  faLocationDot,
-  faBolt,
-  faClock
+  faBolt, faCircleXmark, faArrowsRotate,
+  faLocationDot, faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
 
 function RejectedStation() {
-
-  const { register, handleSubmit } = useForm();
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+  const [station, setStation] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const onSubmit = (data) => {
-    console.log(data);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    fetchMyStation();
+  }, []);
 
-    // API call for resubmitting station
-    // axios.post("/api/station/resubmit", data)
-
-    navigate("/verification"); 
+  const fetchMyStation = async () => {
+    try {
+      const res = await fetch("http://localhost:8000/api/stations/my-station", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      setStation(data.station || null);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="w-9 h-9 rounded-full border-4 border-red-200 border-t-red-400 animate-spin" />
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gray-100 pt-24 px-6 flex justify-center">
+    <div className="min-h-screen bg-gray-50/50 pt-24 pb-16 px-4 flex items-center justify-center">
+      <div className="max-w-md w-full">
 
-      <div className="bg-white shadow-xl rounded-xl p-8 w-full max-w-3xl">
+        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-8 flex flex-col items-center gap-5 text-center">
 
-        {/* Rejection Message */}
-        <div className="bg-red-100 border border-red-400 text-red-700 p-4 rounded-lg mb-6 flex items-center gap-3">
-          <FontAwesomeIcon icon={faCircleExclamation} />
+          {/* Icon */}
+          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-red-400 to-rose-500 flex items-center justify-center shadow-md shadow-red-200">
+            <FontAwesomeIcon icon={faCircleXmark} className="text-white text-3xl" />
+          </div>
+
           <div>
-            <h2 className="font-semibold">Station Rejected</h2>
-            <p className="text-sm">
-              Reason: Incorrect location or incomplete charger information.
+            <h1 className="text-xl font-bold text-gray-800 mb-1">Station Rejected</h1>
+            <p className="text-sm text-gray-400 leading-relaxed">
+              Unfortunately your station did not pass our review. Please check your details and resubmit with accurate information.
             </p>
           </div>
-        </div>
 
-        <h1 className="text-2xl font-bold mb-6">
-          Edit & Resubmit Charging Station
-        </h1>
+          {/* Station Info */}
+          {station && (
+            <div className="w-full bg-red-50 border border-red-100 rounded-2xl p-4 text-left flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-red-400 to-rose-500 flex items-center justify-center shadow-sm shadow-red-100 shrink-0">
+                <FontAwesomeIcon icon={faBolt} className="text-white text-sm" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-gray-800">{station.name}</p>
+                <div className="flex items-center gap-1.5 text-xs text-gray-400 mt-0.5">
+                  <FontAwesomeIcon icon={faLocationDot} className="text-red-400 text-[10px]" />
+                  {station.address?.city}, {station.address?.state}
+                </div>
+              </div>
+              <span className="ml-auto text-xs font-semibold px-2.5 py-1 rounded-full bg-red-100 text-red-500 border border-red-200">
+                Rejected
+              </span>
+            </div>
+          )}
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-
-          {/* Station Name */}
-          <div>
-            <label className="font-medium">Station Name</label>
-            <input
-              {...register("stationName")}
-              className="w-full border rounded-lg p-3 mt-1"
-              placeholder="Enter station name"
-            />
+          {/* Common reasons */}
+          <div className="w-full bg-gray-50 border border-gray-100 rounded-2xl p-4 text-left">
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2.5">Common Reasons</p>
+            <div className="flex flex-col gap-2">
+              {[
+                "Incorrect or incomplete address",
+                "Invalid charger specifications",
+                "Missing or wrong operator details",
+                "Duplicate station entry",
+              ].map((r, i) => (
+                <div key={i} className="flex items-center gap-2 text-xs text-gray-500">
+                  <div className="w-1.5 h-1.5 rounded-full bg-red-300 shrink-0" />
+                  {r}
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* Location */}
-          <div>
-            <label className="font-medium flex items-center gap-2">
-              <FontAwesomeIcon icon={faLocationDot} />
-              Address
-            </label>
-            <input
-              {...register("address")}
-              className="w-full border rounded-lg p-3 mt-1"
-              placeholder="Enter station address"
-            />
-          </div>
-
-          {/* Charger Type */}
-          <div>
-            <label className="font-medium flex items-center gap-2">
-              <FontAwesomeIcon icon={faBolt} />
-              Charger Type
-            </label>
-            <select
-              {...register("chargerType")}
-              className="w-full border rounded-lg p-3 mt-1"
-            >
-              <option value="">Select Charger</option>
-              <option value="CCS">CCS</option>
-              <option value="CHAdeMO">CHAdeMO</option>
-              <option value="Type2">Type 2</option>
-            </select>
-          </div>
-
-          {/* Open Hours */}
-          <div>
-            <label className="font-medium flex items-center gap-2">
-              <FontAwesomeIcon icon={faClock} />
-              Opening Hours
-            </label>
-            <input
-              {...register("hours")}
-              className="w-full border rounded-lg p-3 mt-1"
-              placeholder="e.g. 24 Hours"
-            />
-          </div>
-
-          {/* Buttons */}
-          <div className="flex gap-4 pt-4">
-
+          {/* Actions */}
+          <div className="w-full flex flex-col gap-2.5">
             <button
-              type="submit"
-              className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700"
+              onClick={() => navigate("/add-station")}
+              className="w-full py-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500
+                text-white text-sm font-semibold shadow-sm shadow-emerald-200
+                hover:opacity-90 active:scale-95 transition-all duration-200
+                flex items-center justify-center gap-2"
             >
+              <FontAwesomeIcon icon={faArrowsRotate} />
               Resubmit Station
             </button>
-
             <button
-              type="button"
-              onClick={() => navigate("/dashboard")}
-              className="bg-gray-300 px-6 py-3 rounded-lg"
+              onClick={() => navigate("/")}
+              className="w-full py-3 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600
+                hover:bg-gray-50 transition-all duration-200"
             >
-              Cancel
+              Back to Home
             </button>
-
           </div>
 
-        </form>
-
+        </div>
       </div>
     </div>
   );

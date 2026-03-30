@@ -113,17 +113,17 @@ function App() {
             <AdminDashboard />
           </ProtectedRoute>
         } />
-        <Route path="/admin/stations" element={
+        <Route path="/manage-stations" element={
           <ProtectedRoute allowedRoles={["admin"]}>
             <ManageStations />
           </ProtectedRoute>
         } />
-        <Route path="/admin/users" element={
+        <Route path="/manage-users" element={
           <ProtectedRoute allowedRoles={["admin"]}>
             <ManageUsers />
           </ProtectedRoute>
         } />
-
+        
         {/* ── Footer Pages (public) ── */}
         <Route path="/guide" element={<Guide />} />
         <Route path="/charging-tips" element={<ChargingTips />} />

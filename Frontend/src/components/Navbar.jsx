@@ -277,6 +277,13 @@ function Navbar() {
                   </Link>
                 )}
 
+                <Link to="/profile" onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium
+             text-gray-600 hover:bg-emerald-50 hover:text-emerald-600 transition-colors">
+                  <FontAwesomeIcon icon={faUser} className="text-xs" />
+                  My Profile
+                </Link>
+
                 <button
                   onClick={handleLogout}
                   className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm
