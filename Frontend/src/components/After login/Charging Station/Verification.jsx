@@ -15,6 +15,12 @@ function Verification() {
   useEffect(() => {
     window.scrollTo(0, 0);
     fetchMyStation();
+
+    // Poll every 10 seconds
+  const interval = setInterval(fetchMyStation, 10000);
+
+  // Cleanup on unmount
+  return () => clearInterval(interval);
   }, []);
 
   const fetchMyStation = async () => {

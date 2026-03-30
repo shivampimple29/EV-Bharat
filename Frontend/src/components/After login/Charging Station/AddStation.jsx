@@ -68,10 +68,12 @@ function AddStation() {
       });
 
       const result = await res.json();
-      if (!res.ok) { toast.error(result.error || "Submission failed"); return; }
+      if (!res.ok) { toast.error("Submission failed"); 
+        console.log(result.error);
+        return; }
 
       toast.success("Station submitted for review! ✅");
-      setTimeout(() => navigate("/stations"), 1500);
+      setTimeout(() => navigate("/verification"), 1500);
 
     } catch {
       toast.error("Server error. Try again.");
@@ -87,7 +89,7 @@ function AddStation() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4">
-      <ToastContainer position="top-right" autoClose={2000} />
+      <ToastContainer position="top-right" autoClose={2000} theme="colored"/>
 
       <div className="max-w-2xl mx-auto">
         {/* Header */}
