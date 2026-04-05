@@ -2,7 +2,4 @@ terminal 1:
     rasa run actions
 
 terminal 2:
-    rasa run --enable-api --cors "*" --debug
-
-terminal 3:
-    python -m http.server 8000
+    rasa run --enable-api --cors "*" 

@@ -73,6 +73,25 @@ nlu:
     - I'm bored
     - sing a song
     - what's trending
+    - kaise ho
+    - kya haal hai
+    - kya chal raha hai
+    - aap kaun hain
+    - tumhara naam kya hai
+    - mujhe neend aa rahi hai
+    - kal ka mausam kaisa hai
+    - cricket score kya hai
+    - mera din kaisa rahega
+    - ek joke sunao
+    - khana kahan milega
+    - kya main tumse pyar kar sakta hun
+      - kaise ho
+    - kya haal hai
+    - kya chal raha hai
+    - aap kaun hain
+    - mujhe neend aa rahi hai
+    - ek joke sunao
+    - cricket score kya hai
 
 - intent: find_station_by_city
   examples: |
@@ -225,6 +244,16 @@ nlu:
     - Charger type kya hai
     - What's the power rating?
     - AC or DC charger?
+    - What chargers?
+    - charger details
+    - charger info
+    - is ka charger kaisa hai
+    - show me the charger details
+    - tell me about the plug
+    - how fast does it charge
+    - charger batao
+    - plug type kya hai
+    - what type of charger does it have
 
 - intent: ask_port_availability
   examples: |

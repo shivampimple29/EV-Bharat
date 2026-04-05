@@ -11,99 +11,117 @@ import {
 const RASA_URL = "http://localhost:5005/webhooks/rest/webhook";
 const SENDER_ID = "ev_user_" + Math.random().toString(36).slice(2, 9);
 
+// Quick-suggest chips shown at start
+const QUICK_CHIPS = [
+  { label: "⚡ Stations in Mumbai", msg: "Find stations in Mumbai" },
+  { label: "🏆 Top Rated", msg: "Show top rated stations" },
+  { label: "🔌 CCS Chargers", msg: "Show CCS chargers" },
+  { label: "✅ Verified Only", msg: "Show verified stations" },
+  { label: "⚡ Fastest Charger", msg: "Show fastest chargers" },
+  { label: "📍 Near Me", msg: "Find nearest station" },
+];
+
+// Format bot text: bold **text**, line breaks, numbered lists
+function formatText(text) {
+  const lines = text.split("\n");
+  return lines.map((line, i) => {
+    // Bold **text**
+    const parts = line.split(/\*\*(.*?)\*\*/g);
+    const formatted = parts.map((p, j) =>
+      j % 2 === 1 ? <strong key={j}>{p}</strong> : p
+    );
+    return (
+      <span key={i}>
+        {formatted}
+        {i < lines.length - 1 && <br />}
+      </span>
+    );
+  });
+}
+
 function Chatbot() {
-  const [open,      setOpen]      = useState(false);
-  const [msgs,      setMsgs]      = useState([
+  const [open, setOpen] = useState(false);
+  const [msgs, setMsgs] = useState([
     {
       from: "bot",
-      text: "Hi! I'm EVA ⚡ your EV charging assistant. Ask me about charging stations, tips, or anything EV-related!",
+      text: "Hi! I'm EVA ⚡ your EV charging assistant.\n\nAsk me about charging stations, operators, charger types, and more!",
     },
   ]);
-  const [input,     setInput]     = useState("");
-  const [loading,   setLoading]   = useState(false);
-  const [online,    setOnline]    = useState(false);
-  const [visible,   setVisible]   = useState(false);
-
+  const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [online, setOnline] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [showChips, setShowChips] = useState(true);
+  const [unread, setUnread] = useState(0);
   const bottomRef = useRef(null);
-  const inputRef  = useRef(null);
+  const inputRef = useRef(null);
 
-  // ── Check if Rasa is reachable ──
+  // Check RASA reachability
   useEffect(() => {
     fetch("http://localhost:5005/")
       .then(() => setOnline(true))
       .catch(() => setOnline(false));
   }, []);
 
-  // ── FAB entrance animation ──
+  // FAB entrance animation
   useEffect(() => {
     const t = setTimeout(() => setVisible(true), 800);
     return () => clearTimeout(t);
   }, []);
 
-  // ── Auto scroll to latest message ──
+  // Auto scroll
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [msgs, open]);
 
-  // ── Focus input when chat opens ──
+  // Focus input when opened
   useEffect(() => {
-    if (open) setTimeout(() => inputRef.current?.focus(), 300);
+    if (open) {
+      setUnread(0);
+      setTimeout(() => inputRef.current?.focus(), 300);
+    }
   }, [open]);
 
-  // ── Send message to Rasa ──
+  const addBotMsg = (msg) => {
+    setMsgs((prev) => [...prev, { from: "bot", ...msg }]);
+    if (!open) setUnread((n) => n + 1);
+  };
+
   const sendMessage = async (overrideText) => {
     const text = (overrideText ?? input).trim();
     if (!text || loading) return;
 
-    // Show user bubble immediately
     setMsgs((prev) => [...prev, { from: "user", text }]);
     setInput("");
     setLoading(true);
+    setShowChips(false);
 
     try {
       const res = await fetch(RASA_URL, {
-        method:  "POST",
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify({ sender: SENDER_ID, message: text }),
+        body: JSON.stringify({ sender: SENDER_ID, message: text }),
       });
-
-      const data = await res.json(); // Rasa returns an array
+      const data = await res.json();
 
       if (!data || data.length === 0) {
-        setMsgs((prev) => [
-          ...prev,
-          { from: "bot", text: "I didn't quite get that. Could you rephrase?" },
-        ]);
+        addBotMsg({ text: "I didn't quite get that. Could you rephrase? 🤔" });
       } else {
         data.forEach((item) => {
-          if (item.text) {
-            setMsgs((prev) => [...prev, { from: "bot", text: item.text }]);
-          }
-          if (item.image) {
-            setMsgs((prev) => [...prev, { from: "bot", image: item.image }]);
-          }
-          if (item.buttons) {
-            setMsgs((prev) => [
-              ...prev,
-              { from: "bot", buttons: item.buttons },
-            ]);
-          }
+          if (item.text) addBotMsg({ text: item.text });
+          if (item.image) addBotMsg({ image: item.image });
+          if (item.buttons) addBotMsg({ buttons: item.buttons });
         });
       }
     } catch {
-      setMsgs((prev) => [
-        ...prev,
-        {
-          from: "bot",
-          text: "⚠️ Could not reach EVA. Make sure Rasa is running on port 5005.",
-        },
-      ]);
+      addBotMsg({
+        text: "⚠️ Could not reach EVA. Make sure Rasa is running on port 5005.",
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  // ── Enter key to send ──
   const handleKey = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -111,289 +129,501 @@ function Chatbot() {
     }
   };
 
-  // ── Quick reply button click ──
-  const handleQuickReply = (payload) => {
-    sendMessage(payload);
-  };
-
-  // ── Reset conversation ──
   const resetChat = () => {
     setMsgs([
       {
         from: "bot",
-        text: "Hi! I'm EVA ⚡ your EV charging assistant. Ask me about charging stations, tips, or anything EV-related!",
+        text: "Hi! I'm EVA ⚡ your EV charging assistant.\n\nAsk me about charging stations, operators, charger types, and more!",
       },
     ]);
+    setShowChips(true);
+    setUnread(0);
   };
 
   return (
     <>
-      {/* ═══════════════════════════════
-           CHAT WINDOW
-      ═══════════════════════════════ */}
-      <div
-        className={`fixed bottom-24 right-6 z-50
-                     w-[360px] max-h-[560px]
-                     bg-white rounded-3xl shadow-2xl
-                     border border-gray-100 overflow-hidden
-                     flex flex-col
-                     transition-all duration-400 ease-out
-                     origin-bottom-right
-                     ${
-                       open
-                         ? "opacity-100 scale-100 translate-y-0 pointer-events-auto"
-                         : "opacity-0 scale-90 translate-y-4 pointer-events-none"
-                     }`}
-      >
-        {/* ── Header ── */}
-        <div
-          className="bg-gradient-to-r from-emerald-500 to-teal-500
-                      px-5 py-4 flex items-center gap-3 shrink-0"
-        >
-          {/* Bot avatar */}
-          <div className="relative">
-            <div
-              className="w-9 h-9 rounded-full bg-white/20
-                          flex items-center justify-center"
-            >
-              <FontAwesomeIcon icon={faBolt} className="text-white text-sm" />
+      {/* ── STYLES ─────────────────────────────────────── */}
+      <style>{`
+        /* Widget container */
+        .eva-widget {
+          position: fixed;
+          bottom: 24px;
+          right: 24px;
+          z-index: 9999;
+          font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        /* FAB button */
+        .eva-fab {
+          width: 58px;
+          height: 58px;
+          border-radius: 50%;
+          border: none;
+          background: linear-gradient(135deg, #00b894, #00838f);
+          color: #fff;
+          font-size: 22px;
+          cursor: pointer;
+          box-shadow: 0 4px 20px rgba(0,184,148,0.45);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: transform 0.25s cubic-bezier(.34,1.56,.64,1), box-shadow 0.2s;
+          opacity: 0;
+          transform: scale(0.5) translateY(20px);
+          position: relative;
+        }
+        .eva-fab.visible {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+        .eva-fab:hover {
+          transform: scale(1.08);
+          box-shadow: 0 6px 28px rgba(0,184,148,0.55);
+        }
+        .eva-fab:active { transform: scale(0.96); }
+
+        /* Unread badge */
+        .eva-badge {
+          position: absolute;
+          top: -4px;
+          right: -4px;
+          background: #e74c3c;
+          color: #fff;
+          font-size: 11px;
+          font-weight: 700;
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 2px solid #fff;
+          animation: eva-pulse 1.5s infinite;
+        }
+        @keyframes eva-pulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.15); }
+        }
+
+        /* Chat window */
+        .eva-window {
+            position: absolute;
+            bottom: 72px;
+            right: 0;
+
+            width: 370px;
+            height: clamp(460px, 70vh, 560px); /* responsive + controlled */
+
+            background: #0f1117;
+
+            border-radius: 18px;
+            border: none;
+
+            box-shadow:
+              0 20px 60px rgba(0, 0, 0, 0.55),
+              0 0 0 1px rgba(0, 184, 148, 0.08); /* subtle glow */
+
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+
+            transform-origin: bottom right;
+            animation: eva-open 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+            backdrop-filter: blur(10px); /* premium glass feel */
+            -webkit-backdrop-filter: blur(10px);
+
+            will-change: transform, opacity;
+          }
+        @keyframes eva-open {
+          from { opacity: 0; transform: scale(0.85); }
+          to   { opacity: 1; transform: scale(1); }
+        }
+
+        /* Header */
+        .eva-header {
+          background: linear-gradient(135deg, #00b894 0%, #00838f 100%);
+          padding: 14px 16px;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          flex-shrink: 0;
+        }
+        .eva-avatar {
+          width: 40px;
+          height: 40px;
+          background: rgba(255,255,255,0.2);
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 18px;
+          color:#fff;
+          flex-shrink: 0;
+        }
+        .eva-header-info { flex: 1; }
+        .eva-header-name {
+          font-size: 15px;
+          font-weight: 700;
+          color: #fff;
+          line-height: 1.2;
+        }
+        .eva-header-status {
+          font-size: 12px;
+          color: rgba(255,255,255,0.85);
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          margin-top: 2px;
+        }
+        .eva-status-dot {
+          width: 7px;
+          height: 7px;
+          border-radius: 50%;
+          background: #2ecc71;
+          animation: eva-blink 2s infinite;
+        }
+        .eva-status-dot.offline { background: #e74c3c; animation: none; }
+        @keyframes eva-blink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.4; }
+        }
+        .eva-header-btn {
+          background: rgba(255,255,255,0.15);
+          border: none;
+          color: #fff;
+          width: 32px;
+          height: 32px;
+          border-radius: 8px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 13px;
+          transition: background 0.2s;
+        }
+        .eva-header-btn:hover { background: rgba(255,255,255,0.25); }
+
+        /* Messages area */
+        .eva-messages {
+          flex: 1;
+          overflow-y: auto;
+          padding: 16px 14px;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          scroll-behavior: smooth;
+        }
+        .eva-messages::-webkit-scrollbar { width: 4px; }
+        .eva-messages::-webkit-scrollbar-track { background: transparent; }
+        .eva-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+
+        /* Bubbles */
+        .eva-bubble-row {
+          display: flex;
+          align-items: flex-end;
+          gap: 8px;
+        }
+        .eva-bubble-row.user { flex-direction: row-reverse; }
+        .eva-bubble-icon {
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #00b894, #00838f);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 12px;
+          color: #fff;
+          flex-shrink: 0;
+        }
+        .eva-bubble {
+          max-width: 82%;
+          padding: 10px 13px;
+          border-radius: 16px;
+          font-size: 13.5px;
+          line-height: 1.55;
+          word-break: break-word;
+          white-space: pre-wrap;
+        }
+        .eva-bubble.bot {
+          background: #1e2130;
+          color: #e0e0e0;
+          border-bottom-left-radius: 4px;
+          border: 1px solid rgba(255,255,255,0.06);
+        }
+        .eva-bubble.user {
+          background: linear-gradient(135deg, #00b894, #00838f);
+          color: #fff;
+          border-bottom-right-radius: 4px;
+        }
+        .eva-bubble img {
+          max-width: 100%;
+          border-radius: 8px;
+          margin-top: 6px;
+        }
+
+        /* Quick reply buttons from RASA */
+        .eva-quick-replies {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+          margin-top: 4px;
+          padding-left: 36px;
+        }
+        .eva-qr-btn {
+          background: rgba(0,184,148,0.12);
+          border: 1px solid rgba(0,184,148,0.35);
+          color: #00b894;
+          padding: 5px 12px;
+          border-radius: 20px;
+          font-size: 12.5px;
+          cursor: pointer;
+          transition: background 0.2s, transform 0.15s;
+        }
+        .eva-qr-btn:hover {
+          background: rgba(0,184,148,0.22);
+          transform: translateY(-1px);
+        }
+
+        /* Quick-suggest chips */
+        .eva-chips {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px;
+          padding: 0 14px 12px;
+        }
+        .eva-chip {
+          background: rgba(0,184,148,0.08);
+          border: 1px solid rgba(0,184,148,0.25);
+          color: #00c8a0;
+          padding: 5px 11px;
+          border-radius: 20px;
+          font-size: 12px;
+          cursor: pointer;
+          transition: background 0.2s, transform 0.15s;
+          white-space: nowrap;
+        }
+        .eva-chip:hover {
+          background: rgba(0,184,148,0.18);
+          transform: translateY(-1px);
+        }
+
+        /* Typing indicator */
+        .eva-typing {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding-left: 4px;
+        }
+        .eva-typing-dots {
+          display: flex;
+          gap: 4px;
+          background: #1e2130;
+          padding: 10px 14px;
+          border-radius: 16px;
+          border-bottom-left-radius: 4px;
+          border: 1px solid rgba(255,255,255,0.06);
+        }
+        .eva-typing-dots span {
+          width: 7px;
+          height: 7px;
+          border-radius: 50%;
+          background: #00b894;
+          animation: eva-typing 1.2s infinite;
+        }
+        .eva-typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .eva-typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes eva-typing {
+          0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+          30% { transform: translateY(-6px); opacity: 1; }
+        }
+
+        /* Input bar */
+        .eva-inputbar {
+          padding: 12px 14px;
+          background: #0f1117;
+          border-top: 1px solid rgba(255,255,255,0.06);
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          flex-shrink: 0;
+        }
+        .eva-input {
+          flex: 1;
+          background: #1e2130;
+          border: 1px solid rgba(255,255,255,0.08);
+          border-radius: 22px;
+          padding: 9px 16px;
+          color: #e0e0e0;
+          font-size: 13.5px;
+          outline: none;
+          transition: border-color 0.2s;
+        }
+        .eva-input::placeholder { color: #666; }
+        .eva-input:focus { border-color: rgba(0,184,148,0.5); }
+        .eva-send-btn {
+          width: 38px;
+          height: 38px;
+          border-radius: 50%;
+          border: none;
+          background: linear-gradient(135deg, #00b894, #00838f);
+          color: #fff;
+          font-size: 14px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+          transition: transform 0.2s, box-shadow 0.2s;
+          box-shadow: 0 2px 10px rgba(0,184,148,0.4);
+        }
+        .eva-send-btn:hover { transform: scale(1.08); box-shadow: 0 4px 16px rgba(0,184,148,0.5); }
+        .eva-send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+        /* Footer */
+        .eva-footer {
+          text-align: center;
+          font-size: 11px;
+          color: #444;
+          padding: 6px 0 10px;
+          flex-shrink: 0;
+        }
+        .eva-footer span { color: #00b894; }
+
+        /* Mobile responsive */
+        @media (max-width: 420px) {
+          .eva-widget { bottom: 16px; right: 16px; }
+          .eva-window { width: calc(100vw - 32px); height: 70vh; right: 0; }
+        }
+      `}</style>
+
+      {/* ── WIDGET ─────────────────────────────────────── */}
+      <div className="eva-widget">
+
+        {/* Chat window */}
+        {open && (
+          <div className="eva-window">
+
+            {/* Header */}
+            <div className="eva-header">
+              <div className="eva-avatar">
+                <FontAwesomeIcon icon={faBolt} />
+              </div>
+              <div className="eva-header-info">
+                <div className="eva-header-name">EVA — EV Assistant</div>
+                <div className="eva-header-status">
+                  <span className={`eva-status-dot ${online ? "" : "offline"}`} />
+                  {online ? "Online · Ready to help" : "Connecting..."}
+                </div>
+              </div>
+              <button className="eva-header-btn" onClick={resetChat} title="Reset chat">
+                <FontAwesomeIcon icon={faRotateRight} />
+              </button>
+              <button className="eva-header-btn" onClick={() => setOpen(false)} title="Close">
+                <FontAwesomeIcon icon={faXmark} />
+              </button>
             </div>
-            {/* Online / offline dot */}
-            <div
-              className={`absolute -bottom-0.5 -right-0.5
-                           w-3 h-3 rounded-full border-2 border-white
-                           transition-colors duration-300
-                           ${online ? "bg-green-400" : "bg-gray-400"}`}
-            />
-          </div>
 
-          {/* Name + status */}
-          <div className="flex-1">
-            <p className="text-white font-bold text-sm leading-none mb-0.5">
-              EVA
-            </p>
-            <p className="text-white/70 text-[10px]">
-              {online
-                ? "Online · EV Charging Assistant"
-                : "Connecting..."}
-            </p>
-          </div>
-
-          {/* Reset button */}
-          <button
-            onClick={resetChat}
-            title="Reset conversation"
-            className="w-8 h-8 rounded-full bg-white/10
-                       flex items-center justify-center
-                       hover:bg-white/20 transition-colors duration-200 mr-1"
-          >
-            <FontAwesomeIcon
-              icon={faRotateRight}
-              className="text-white text-xs"
-            />
-          </button>
-
-          {/* Close button */}
-          <button
-            onClick={() => setOpen(false)}
-            className="w-8 h-8 rounded-full bg-white/10
-                       flex items-center justify-center
-                       hover:bg-white/20 transition-colors duration-200"
-          >
-            <FontAwesomeIcon icon={faXmark} className="text-white text-sm" />
-          </button>
-        </div>
-
-        {/* ── Messages area ── */}
-        <div
-          className="flex-1 overflow-y-auto px-4 py-4 space-y-3 bg-gray-50"
-          style={{ minHeight: 0 }}
-        >
-          {msgs.map((msg, i) => (
-            <div key={i}>
-
-              {/* Text bubble */}
-              {msg.text && (
-                <div
-                  className={`flex items-end gap-2
-                               ${msg.from === "user"
-                                 ? "justify-end"
-                                 : "justify-start"
-                               }`}
-                >
-                  {/* Bot avatar beside message */}
-                  {msg.from === "bot" && (
-                    <div
-                      className="w-6 h-6 rounded-full shrink-0
-                                  bg-gradient-to-br from-emerald-500 to-teal-500
-                                  flex items-center justify-center mb-0.5"
-                    >
-                      <FontAwesomeIcon
-                        icon={faBolt}
-                        className="text-white text-[8px]"
-                      />
+            {/* Messages */}
+            <div className="eva-messages">
+              {msgs.map((m, i) => (
+                <div key={i}>
+                  {/* Text bubble */}
+                  {m.text && (
+                    <div className={`eva-bubble-row ${m.from}`}>
+                      {m.from === "bot" && (
+                        <div className="eva-bubble-icon">
+                          <FontAwesomeIcon icon={faBolt} />
+                        </div>
+                      )}
+                      <div className={`eva-bubble ${m.from}`}>
+                        {formatText(m.text)}
+                        {m.image && <img src={m.image} alt="station" />}
+                      </div>
                     </div>
                   )}
+                  {/* Quick reply buttons from RASA */}
+                  {m.buttons && (
+                    <div className="eva-quick-replies">
+                      {m.buttons.map((b, bi) => (
+                        <button
+                          key={bi}
+                          className="eva-qr-btn"
+                          onClick={() => sendMessage(b.payload || b.title)}
+                        >
+                          {b.title}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
 
-                  <div
-                    className={`max-w-[75%] px-4 py-2.5 text-sm leading-relaxed
-                                 ${msg.from === "user"
-                                   ? `rounded-2xl rounded-br-sm
-                                      bg-gradient-to-br from-emerald-500 to-teal-500
-                                      text-white shadow-sm shadow-emerald-200`
-                                   : `rounded-2xl rounded-bl-sm
-                                      bg-white border border-gray-100
-                                      text-gray-800 shadow-sm`
-                                 }`}
-                  >
-                    {msg.text}
+              {/* Typing indicator */}
+              {loading && (
+                <div className="eva-typing">
+                  <div className="eva-bubble-icon">
+                    <FontAwesomeIcon icon={faBolt} />
+                  </div>
+                  <div className="eva-typing-dots">
+                    <span /><span /><span />
                   </div>
                 </div>
               )}
-
-              {/* Image from Rasa */}
-              {msg.image && (
-                <div className="flex justify-start pl-8">
-                  <img
-                    src={msg.image}
-                    alt="response"
-                    className="max-w-[75%] rounded-2xl
-                               border border-gray-100 shadow-sm"
-                  />
-                </div>
-              )}
-
-              {/* Quick reply buttons from Rasa */}
-              {msg.buttons && (
-                <div className="flex flex-wrap gap-2 mt-1 pl-8">
-                  {msg.buttons.map((btn, j) => (
-                    <button
-                      key={j}
-                      onClick={() => handleQuickReply(btn.payload)}
-                      className="px-3 py-1.5 rounded-full
-                                 text-xs font-semibold
-                                 bg-emerald-50 border border-emerald-200
-                                 text-emerald-600
-                                 hover:bg-emerald-100
-                                 hover:scale-105 active:scale-95
-                                 transition-all duration-150"
-                    >
-                      {btn.title}
-                    </button>
-                  ))}
-                </div>
-              )}
+              <div ref={bottomRef} />
             </div>
-          ))}
 
-          {/* Typing indicator (3 bouncing dots) */}
-          {loading && (
-            <div className="flex items-end gap-2">
-              <div
-                className="w-6 h-6 rounded-full shrink-0
-                            bg-gradient-to-br from-emerald-500 to-teal-500
-                            flex items-center justify-center"
-              >
-                <FontAwesomeIcon
-                  icon={faBolt}
-                  className="text-white text-[8px]"
-                />
-              </div>
-              <div
-                className="bg-white border border-gray-100 rounded-2xl
-                            rounded-bl-sm px-4 py-3 flex items-center gap-1
-                            shadow-sm"
-              >
-                {[0, 1, 2].map((d) => (
-                  <div
-                    key={d}
-                    className="w-1.5 h-1.5 rounded-full bg-emerald-400
-                               animate-bounce"
-                    style={{ animationDelay: `${d * 150}ms` }}
-                  />
+            {/* Quick-suggest chips */}
+            {showChips && (
+              <div className="eva-chips">
+                {QUICK_CHIPS.map((c, i) => (
+                  <button key={i} className="eva-chip" onClick={() => sendMessage(c.msg)}>
+                    {c.label}
+                  </button>
                 ))}
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Scroll anchor */}
-          <div ref={bottomRef} />
-        </div>
-
-        {/* ── Input bar ── */}
-        <div className="px-4 py-3 border-t border-gray-100 bg-white shrink-0">
-          <div
-            className="flex items-center gap-2
-                        bg-gray-50 border border-gray-200 rounded-2xl px-4 py-2
-                        focus-within:border-emerald-400
-                        focus-within:ring-2 focus-within:ring-emerald-100
-                        transition-all duration-200"
-          >
-            <input
-              ref={inputRef}
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={handleKey}
-              placeholder="Ask about EV stations..."
-              className="flex-1 bg-transparent outline-none
-                         text-sm text-gray-800 placeholder-gray-400"
-            />
-            <button
-              onClick={() => sendMessage()}
-              disabled={!input.trim() || loading}
-              className="w-8 h-8 rounded-xl shrink-0
-                         bg-gradient-to-br from-emerald-500 to-teal-500
-                         flex items-center justify-center
-                         hover:scale-110 active:scale-95
-                         disabled:opacity-40 disabled:cursor-not-allowed
-                         disabled:hover:scale-100
-                         transition-all duration-200"
-            >
-              <FontAwesomeIcon
-                icon={faPaperPlane}
-                className="text-white text-xs"
+            {/* Input bar */}
+            <div className="eva-inputbar">
+              <input
+                ref={inputRef}
+                className="eva-input"
+                placeholder="Ask about EV stations..."
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                onKeyDown={handleKey}
+                disabled={loading}
               />
-            </button>
-          </div>
-          <p className="text-center text-gray-300 text-[9px] mt-2 tracking-wide">
-            Powered by EV Bharat · Rasa AI
-          </p>
-        </div>
-      </div>
+              <button
+                className="eva-send-btn"
+                onClick={() => sendMessage()}
+                disabled={loading || !input.trim()}
+              >
+                <FontAwesomeIcon icon={faPaperPlane} />
+              </button>
+            </div>
 
-      {/* ═══════════════════════════════
-           FLOATING ACTION BUTTON (FAB)
-      ═══════════════════════════════ */}
-      <button
-        onClick={() => setOpen((o) => !o)}
-        className={`fixed bottom-6 right-6 z-50
-                     w-14 h-14 rounded-full
-                     bg-gradient-to-br from-emerald-500 to-teal-500
-                     text-white shadow-xl shadow-emerald-300/50
-                     flex items-center justify-center
-                     hover:scale-110 active:scale-95
-                     transition-all duration-300
-                     ${
-                       visible
-                         ? "opacity-100 translate-y-0"
-                         : "opacity-0 translate-y-6"
-                     }`}
-      >
-        {/* Ping ring — only when chat is closed */}
-        {!open && (
-          <div
-            className="absolute inset-0 rounded-full
-                        bg-emerald-400/30 animate-ping"
-          />
+            {/* Footer */}
+            <div className="eva-footer">
+              Powered by <span>EV Bharat</span> · Rasa AI
+            </div>
+          </div>
         )}
 
-        <FontAwesomeIcon
-          icon={open ? faXmark : faCommentDots}
-          className={`text-xl transition-all duration-300
-                       ${open ? "rotate-90" : "rotate-0"}`}
-        />
-      </button>
+        {/* FAB */}
+        <button
+          className={`eva-fab ${visible ? "visible" : ""}`}
+          onClick={() => setOpen((o) => !o)}
+          title="Chat with EVA"
+        >
+          <FontAwesomeIcon icon={open ? faXmark : faCommentDots} />
+          {!open && unread > 0 && (
+            <span className="eva-badge">{unread}</span>
+          )}
+        </button>
+      </div>
     </>
   );
 }

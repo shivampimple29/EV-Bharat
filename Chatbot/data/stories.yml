@@ -1,135 +1,87 @@
 version: "3.1"
 
 stories:
-# Story 1 - User searches by city
-- story: user searches by city
-  steps:
-  - intent: find_station_by_city
-    entities:
-    - city: Pune
-  - action: action_search_stations
-  - action: utter_select_from_list
 
-# Story 2 - User searches then picks one from list
-- story: user searches by city then picks station
+- story: search city then pick
   steps:
   - intent: find_station_by_city
-    entities:
-    - city: Pune
   - action: action_search_stations
-  - action: utter_select_from_list
   - intent: select_station_from_list
-    entities:
-    - number: "1"
   - action: action_get_station_by_id
 
-# Story 3 - User asks follow up after picking a station
-- story: user asks charger info after picking station
+- story: search city pick then follow up
   steps:
   - intent: find_station_by_city
-    entities:
-    - city: Pune
   - action: action_search_stations
-  - action: utter_select_from_list
   - intent: select_station_from_list
-    entities:
-    - number: "1"
   - action: action_get_station_by_id
   - intent: ask_charger_info
   - action: action_get_station_by_id
   - intent: ask_amenities
   - action: action_get_station_by_id
+  - intent: ask_rating
+  - action: action_get_station_by_id
 
-# Story 4 - Search by charger type
-- story: user searches by charger type
+- story: search charger type then pick
   steps:
   - intent: find_station_by_charger_type
-    entities:
-    - charger_type: CCS
   - action: action_search_stations
-  - action: utter_select_from_list
+  - intent: select_station_from_list
+  - action: action_get_station_by_id
+  - intent: ask_port_availability
+  - action: action_get_station_by_id
 
-# Story 5 - Search by top rated stations
-- story: user searches top rated stations
+- story: search operator then pick
+  steps:
+  - intent: find_station_by_operator
+  - action: action_search_stations
+  - intent: select_station_from_list
+  - action: action_get_station_by_id
+  - intent: ask_operator
+  - action: action_get_station_by_id
+
+- story: top rated then pick
   steps:
   - intent: find_top_rated_stations
   - action: action_search_stations
-  - action: utter_select_from_list
+  - intent: select_station_from_list
+  - action: action_get_station_by_id
 
-# Story 6 - Search nearby stations with location permission
-- story: user searches nearby stations
-  steps:
-  - intent: find_nearby_stations
-  - action: utter_ask_location_permission
-  - intent: affirm
-  - action: action_find_nearby
-
-# Story 7 - Search by operator
-- story: user searches by operator
-  steps:
-  - intent: find_station_by_operator
-    entities:
-    - operator: Tata Power
-  - action: action_search_stations
-  - action: utter_select_from_list
-
-# Story 8 - Search verified stations only
-- story: user searches verified stations
+- story: verified then pick
   steps:
   - intent: find_verified_stations
   - action: action_search_stations
-  - action: utter_select_from_list
+  - intent: select_station_from_list
+  - action: action_get_station_by_id
 
-# Additional story - Search by state
-- story: user searches by state
-  steps:
-  - intent: find_station_by_state
-    entities:
-    - state: Maharashtra
-  - action: action_search_stations
-  - action: utter_select_from_list
-
-# Additional story - Search fastest chargers
-- story: user searches fastest chargers
+- story: fastest then pick
   steps:
   - intent: find_fastest_charger
   - action: action_search_stations
-  - action: utter_select_from_list
+  - intent: select_station_from_list
+  - action: action_get_station_by_id
 
-# Additional story - User asks multiple follow-ups
-- story: user asks multiple questions about selected station
+- story: state search then pick
+  steps:
+  - intent: find_station_by_state
+  - action: action_search_stations
+  - intent: select_station_from_list
+  - action: action_get_station_by_id
+
+- story: nearby then pick
+  steps:
+  - intent: find_nearby_stations
+  - action: action_find_nearby
+
+- story: full detail flow
   steps:
   - intent: find_station_by_city
-    entities:
-    - city: Bangalore
   - action: action_search_stations
-  - action: utter_select_from_list
   - intent: select_station_from_list
-    entities:
-    - number: "2"
-  - action: action_get_station_by_id
-  - intent: ask_rating
-  - action: action_get_station_by_id
-  - intent: ask_operator
   - action: action_get_station_by_id
   - intent: ask_verified
   - action: action_get_station_by_id
   - intent: ask_status
   - action: action_get_station_by_id
-
-# Additional story - Search by charger type then pick and ask details
-- story: search CCS charger then get details
-  steps:
-  - intent: find_station_by_charger_type
-    entities:
-    - charger_type: Type2
-  - action: action_search_stations
-  - action: utter_select_from_list
-  - intent: select_station_from_list
-    entities:
-    - number: "1"
-  - action: action_get_station_by_id
-  - intent: ask_charger_info
-  - action: action_get_station_by_id
-  - intent: ask_port_availability
+  - intent: ask_operator
   - action: action_get_station_by_id

@@ -1,0 +1,72 @@
+# Rasa trained models
+models/
+
+# Rasa runtime files
+.rasa/
+events.db
+tracker.db
+
+# Rasa specific data
+data/*.db
+domain.yml.backup
+config.yml.backup
+credentials.yml.backup
+endpoints.yml.backup
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environment
+venv/
+env/
+.venv/
+.env/
+
+# Environment variables
+.env
+*.env
+
+# Logs
+logs/
+*.log
+rasa.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
+
+# Results and test outputs
+results/
+
+# Training artifacts
+*.pkl
+*.pickle
+*.npy
+*.npz
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*~
