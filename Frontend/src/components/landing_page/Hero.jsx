@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 function Hero() {
   const [visible, setVisible] = useState(false);
-  const [searchVal, setSearchVal] = useState("");
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     // Small delay so browser paints first, then animates in
@@ -12,9 +13,9 @@ function Hero() {
 
   const stats = [
     { value: "10,000+", label: "Charging Stations", icon: "fa-solid fa-charging-station" },
-    { value: "500+",    label: "Cities Covered",    icon: "fa-solid fa-city"             },
-    { value: "50M+",    label: "kWh Delivered",     icon: "fa-solid fa-bolt"             },
-    { value: "24/7",    label: "Availability",      icon: "fa-solid fa-clock"            },
+    { value: "500+", label: "Cities Covered", icon: "fa-solid fa-city" },
+    { value: "50M+", label: "kWh Delivered", icon: "fa-solid fa-bolt" },
+    { value: "24/7", label: "Availability", icon: "fa-solid fa-clock" },
   ];
 
   return (
@@ -42,8 +43,8 @@ function Hero() {
           stroke="url(#arcGrad)" strokeWidth="0.5" />
         <defs>
           <linearGradient id="arcGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%"   stopColor="#10b981" stopOpacity="0" />
-            <stop offset="50%"  stopColor="#10b981" stopOpacity="1" />
+            <stop offset="0%" stopColor="#10b981" stopOpacity="0" />
+            <stop offset="50%" stopColor="#10b981" stopOpacity="1" />
             <stop offset="100%" stopColor="#14b8a6" stopOpacity="0" />
           </linearGradient>
         </defs>
@@ -66,10 +67,10 @@ function Hero() {
                      animate-[ping_3s_ease-in-out_infinite]
                      pointer-events-none"
           style={{
-            top:              `${15 + i * 14}%`,
-            left:             `${8 + i * 15}%`,
-            animationDelay:   `${i * 0.6}s`,
-            animationDuration:`${2 + i * 0.4}s`,
+            top: `${15 + i * 14}%`,
+            left: `${8 + i * 15}%`,
+            animationDelay: `${i * 0.6}s`,
+            animationDuration: `${2 + i * 0.4}s`,
             opacity: 0.6,
           }} />
       ))}
@@ -85,9 +86,9 @@ function Hero() {
                         hover:bg-white/8 hover:border-white/20
                         transition-all duration-700 ease-out cursor-default
                         ${visible
-                          ? "opacity-100 translate-y-0"
-                          : "opacity-0 translate-y-4"
-                        }`}>
+            ? "opacity-100 translate-y-0"
+            : "opacity-0 translate-y-4"
+          }`}>
           <span className="w-5 h-5 rounded-full
                            bg-gradient-to-br from-emerald-400 to-teal-500
                            flex items-center justify-center
@@ -103,9 +104,9 @@ function Hero() {
                         leading-tight tracking-tight
                         transition-all duration-700 ease-out delay-100
                         ${visible
-                          ? "opacity-100 translate-y-0"
-                          : "opacity-0 translate-y-5"
-                        }`}>
+            ? "opacity-100 translate-y-0"
+            : "opacity-0 translate-y-5"
+          }`}>
           Find EV Charging
         </h1>
 
@@ -116,9 +117,9 @@ function Hero() {
                           drop-shadow-[0_0_60px_rgba(16,185,129,0.4)]
                           transition-all duration-700 ease-out delay-200
                           ${visible
-                            ? "opacity-100 translate-y-0 blur-none"
-                            : "opacity-0 translate-y-5 blur-sm"
-                          }`}>
+            ? "opacity-100 translate-y-0 blur-none"
+            : "opacity-0 translate-y-5 blur-sm"
+          }`}>
           Stations Near You
         </span>
 
@@ -133,9 +134,9 @@ function Hero() {
                        leading-relaxed
                        transition-all duration-700 ease-out delay-300
                        ${visible
-                         ? "opacity-100 translate-y-0"
-                         : "opacity-0 translate-y-4"
-                       }`}>
+            ? "opacity-100 translate-y-0"
+            : "opacity-0 translate-y-4"
+          }`}>
           Discover{" "}
           <span className="text-emerald-400 font-semibold">10,000+</span>{" "}
           charging stations across India. Fast, reliable, and always available
@@ -146,9 +147,9 @@ function Hero() {
         <div className={`relative mt-12 max-w-2xl mx-auto group
                          transition-all duration-700 ease-out delay-[400ms]
                          ${visible
-                           ? "opacity-100 translate-y-0"
-                           : "opacity-0 translate-y-5"
-                         }`}>
+            ? "opacity-100 translate-y-0"
+            : "opacity-0 translate-y-5"
+          }`}>
           {/* Glow */}
           <div className="absolute -inset-1 rounded-2xl
                           bg-gradient-to-r from-emerald-400 to-teal-500
@@ -167,27 +168,29 @@ function Hero() {
 
             <input
               type="text"
-              value={searchVal}
-              onChange={(e) => setSearchVal(e.target.value)}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
               placeholder="Search by city, area, or station name..."
               className="flex-1 bg-transparent outline-none px-3 py-2.5
                          text-gray-800 placeholder-gray-400 text-sm w-full" />
 
             <div className="hidden sm:block w-px h-8 bg-gray-200 shrink-0" />
 
-            <button className="w-full sm:w-auto
-                               bg-gradient-to-r from-emerald-500 to-teal-500
-                               text-white px-6 py-3 rounded-xl
-                               text-sm font-semibold
-                               shadow-md shadow-emerald-900/20
-                               hover:shadow-lg hover:shadow-emerald-500/30
-                               hover:scale-105 hover:brightness-110
-                               active:scale-95
-                               transition-all duration-200
-                               flex items-center justify-center gap-2 shrink-0">
+            <Link
+              to={`/stations?q=${encodeURIComponent(search)}`}
+              className="w-full sm:w-auto
+                        bg-gradient-to-r from-emerald-500 to-teal-500
+                      text-white px-6 py-3 rounded-xl
+                        text-sm font-semibold
+                        shadow-md shadow-emerald-900/20
+                        hover:shadow-lg hover:shadow-emerald-500/30
+                        hover:scale-105 hover:brightness-110
+                        active:scale-95
+                        transition-all duration-200
+                        flex items-center justify-center gap-2 shrink-0">
               <i className="fa-solid fa-magnifying-glass text-xs" />
               Search
-            </button>
+            </Link>
           </div>
         </div>
 
@@ -195,9 +198,9 @@ function Hero() {
         <div className={`flex items-center justify-center flex-wrap gap-2 mt-4
                          transition-all duration-700 ease-out delay-500
                          ${visible
-                           ? "opacity-100 translate-y-0"
-                           : "opacity-0 translate-y-3"
-                         }`}>
+            ? "opacity-100 translate-y-0"
+            : "opacity-0 translate-y-3"
+          }`}>
           {["Mumbai", "Delhi", "Bangalore", "Pune", "Chennai"].map((city, i) => (
             <button key={city}
               className="px-3 py-1.5 rounded-full
@@ -224,11 +227,11 @@ function Hero() {
                           hover:shadow-lg hover:shadow-emerald-900/20
                           transition-all duration-300 cursor-default
                           ${visible
-                            ? "opacity-100 translate-y-0"
-                            : "opacity-0 translate-y-6"
-                          }`}
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 translate-y-6"
+                }`}
               style={{
-                transitionDelay:    `${600 + i * 100}ms`,
+                transitionDelay: `${600 + i * 100}ms`,
                 transitionDuration: "700ms",
               }}>
 

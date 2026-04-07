@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import StationCard from "./StationCard";
+import { useSearchParams } from "react-router-dom";
 
 function StationList() {
   const navigate = useNavigate();
@@ -14,8 +15,16 @@ function StationList() {
   const [totalStations, setTotalStations] = useState(0);
   const [pageTransition, setPageTransition] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
+  const [searchParams] = useSearchParams();
+  const query = searchParams.get("q") || "";
 
   const limit = 20;
+
+  useEffect(() => {
+  if (query) {
+    setSearch(query);
+  }
+}, [query]);
 
   useEffect(() => {
     const fetchStations = async () => {
