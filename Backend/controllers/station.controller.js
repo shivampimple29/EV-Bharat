@@ -28,6 +28,63 @@ module.exports.getAllStationsForMap = async (req, res) => {
   res.status(200).json({ success: true, total: stations.length, stations });
 };
 
+// ── GET NEARBY STATIONS ──
+module.exports.getNearbyStations = async (req, res) => {
+  const { lat, lng, radius = 200000 } = req.query;
+  if (!lat || !lng) throw new ExpressError(400, "lat and lng are required");
+  const stations = await EVStation.find({
+    location: {
+      $near: {
+        $geometry: { type: "Point", coordinates: [parseFloat(lng), parseFloat(lat)] },
+        $maxDistance: parseInt(radius),
+      },
+    },
+  }).select("name location address averageRating isVerified chargers operator");
+  res.status(200).json({ success: true, total: stations.length, stations });
+};
+
+// ── GET STATIONS ALONG ROUTE ── 
+module.exports.getStationsAlongRoute = async (req, res) => {
+  const { coordinates, bufferKm = 10 } = req.body;
+
+  if (!coordinates || !Array.isArray(coordinates) || coordinates.length < 2) {
+    throw new ExpressError(400, "Route coordinates array is required");
+  }
+
+  // ── 100 points instead of 25 — handles routes up to 3000km ──────
+  const MAX_POINTS = 100;
+  const step = Math.max(1, Math.floor(coordinates.length / MAX_POINTS));
+  const sampled = coordinates.filter((_, i) => i % step === 0);
+
+  // Always include last point
+  const last = coordinates[coordinates.length - 1];
+  if (sampled[sampled.length - 1] !== last) sampled.push(last);
+
+  const radiusRadians = parseFloat(bufferKm) / 6378.1;
+
+  const geoConditions = sampled.map(([lng, lat]) => ({
+    location: {
+      $geoWithin: {
+        $centerSphere: [[lng, lat], radiusRadians],
+      },
+    },
+  }));
+
+  const stations = await EVStation.find({ $or: geoConditions })
+    .select("name location address averageRating isVerified chargers operator")
+    .lean();
+
+  const seen = new Set();
+  const unique = stations.filter(s => {
+    const id = s._id.toString();
+    if (seen.has(id)) return false;
+    seen.add(id);
+    return true;
+  });
+
+  res.status(200).json({ success: true, total: unique.length, stations: unique });
+};
+
 // ── GET ALL STATIONS WITH SEARCH + FILTERS + OPTIONAL GPS ──
 module.exports.getAllStations = async (req, res) => {
   const {
@@ -47,7 +104,6 @@ module.exports.getAllStations = async (req, res) => {
 
   let filter = {};
 
-  // ── Step 1: GPS base filter (applied first if coords present) ─────
   if (lat && lng) {
     filter.location = {
       $near: {
@@ -60,7 +116,6 @@ module.exports.getAllStations = async (req, res) => {
     };
   }
 
-  // ── Step 2: Text search ───────────────────────────────────────────
   if (search.trim()) {
     filter.$or = [
       { name:            { $regex: search.trim(), $options: "i" } },
@@ -70,7 +125,6 @@ module.exports.getAllStations = async (req, res) => {
     ];
   }
 
-  // ── Step 3: Charger filters — $elemMatch enforces same element ────
   if (chargerType.trim() || minPower || available === "true") {
     const chargerMatch = {};
     if (chargerType.trim()) {
@@ -85,29 +139,22 @@ module.exports.getAllStations = async (req, res) => {
     filter.chargers = { $elemMatch: chargerMatch };
   }
 
-  // ── Step 4: Verified boolean — strictly true ──────────────────────
-  if (verified === "true") {
-    filter.isVerified = true;
-  }
+  if (verified === "true") filter.isVerified = true;
 
-  // ── Step 5: Min rating — strict numeric $gte ──────────────────────
   if (minRating && !isNaN(parseFloat(minRating))) {
     filter.averageRating = { $gte: parseFloat(minRating) };
   }
 
-  // ── Step 6: City — exact match, case-insensitive ──────────────────
   if (city.trim()) {
     filter["address.city"] = { $regex: `^${city.trim()}$`, $options: "i" };
   }
 
-  // ── Step 7: State — exact match, case-insensitive ─────────────────
   if (state.trim()) {
     filter["address.state"] = { $regex: `^${state.trim()}$`, $options: "i" };
   }
 
-  // ── Step 8: Sort ($near already sorts by distance, override only if no GPS) ──
   const sortOption = lat && lng
-    ? {}   // $near auto-sorts by proximity — don't override
+    ? {}
     : sortBy === "newest"
       ? { createdAt: -1 }
       : { averageRating: -1 };

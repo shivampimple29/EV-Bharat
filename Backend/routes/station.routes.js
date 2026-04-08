@@ -9,6 +9,7 @@ const { protect, stationOwnerOnly } = require("../middleware/auth");
 router.get("/",       wrapAsync(stationController.getAllStations)); 
 router.get("/nearby", wrapAsync(stationController.getNearbyStations));
 router.get("/map", wrapAsync(stationController.getAllStationsForMap));
+router.post("/along-route", wrapAsync(stationController.getStationsAlongRoute));
 
 router.use("/:stationId/reviews", reviewRoutes);
 
