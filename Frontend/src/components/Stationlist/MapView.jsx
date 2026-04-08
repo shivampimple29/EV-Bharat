@@ -12,14 +12,10 @@ import {
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
 const MAP_STYLES = [
-  { key: "streets",   label: "Streets",   url: "mapbox://styles/mapbox/streets-v11" },
+  { key: "streets", label: "Streets", url: "mapbox://styles/mapbox/streets-v11" },
   { key: "satellite", label: "Satellite", url: "mapbox://styles/mapbox/satellite-streets-v12" },
-  { key: "light",     label: "Light",     url: "mapbox://styles/mapbox/light-v11" },
+  { key: "light", label: "Light", url: "mapbox://styles/mapbox/light-v11" },
 ];
-
-// 50 km radius for nearby stations
-const NEARBY_RADIUS_METERS = 50000;
-const NEARBY_LIMIT          = 200;
 
 // ─── Marker element creators ───────────────────────────────────────────────────
 const mkUserDot = () => {
@@ -41,28 +37,28 @@ const mkDestPin = () => {
 
 // ──────────────────────────────────────────────────────────────────────────────
 function MapView({ destinationStation = null }) {
-  const navigate     = useNavigate();
+  const navigate = useNavigate();
   const mapContainer = useRef(null);
-  const mapRef       = useRef(null);
-  const [mapLoaded,    setMapLoaded]    = useState(false);
+  const mapRef = useRef(null);
+  const [mapLoaded, setMapLoaded] = useState(false);
   const [stationCount, setStationCount] = useState(0);
-  const [activeStyle,  setActiveStyle]  = useState("streets");
-  const [showPicker,   setShowPicker]   = useState(false);
+  const [activeStyle, setActiveStyle] = useState("streets");
+  const [showPicker, setShowPicker] = useState(false);
 
   // GPS state
   const [userLocation, setUserLocation] = useState(null);
-  const [gpsLoading,   setGpsLoading]   = useState(false);
-  const [gpsError,     setGpsError]     = useState(null);
+  const [gpsLoading, setGpsLoading] = useState(false);
+  const [gpsError, setGpsError] = useState(null);
 
   // Navigation state
   const [routeLoading, setRouteLoading] = useState(false);
-  const [routeInfo,    setRouteInfo]    = useState(null);
-  const [navActive,    setNavActive]    = useState(false);
+  const [routeInfo, setRouteInfo] = useState(null);
+  const [navActive, setNavActive] = useState(false);
 
   // Refs to control markers
-  const userMarkerRef       = useRef(null);
-  const destMarkerRef       = useRef(null);
-  const stationMarkersRef   = useRef([]);   // all ⚡ markers
+  const userMarkerRef = useRef(null);
+  const destMarkerRef = useRef(null);
+  const stationMarkersRef = useRef([]);   // all ⚡ markers
 
   // ── Hide / show all station markers (for nav mode toggle) ─────────────────
   const hideStationMarkers = () =>
@@ -75,7 +71,7 @@ function MapView({ destinationStation = null }) {
     if (!navigator.geolocation) { reject(new Error("GPS not supported.")); return; }
     navigator.geolocation.getCurrentPosition(
       pos => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-      ()  => reject(new Error("Location access denied. Please allow GPS.")),
+      () => reject(new Error("Location access denied. Please allow GPS.")),
       { enableHighAccuracy: true, timeout: 10000 }
     );
   });
@@ -101,17 +97,21 @@ function MapView({ destinationStation = null }) {
       setRouteInfo({ distance: (route.distance / 1000).toFixed(1), duration: Math.round(route.duration / 60) });
 
       // Remove old layers/source
-      if (map.getLayer("nav-route"))   map.removeLayer("nav-route");
-      if (map.getLayer("nav-casing"))  map.removeLayer("nav-casing");
-      if (map.getSource("nav-route"))  map.removeSource("nav-route");
+      if (map.getLayer("nav-route")) map.removeLayer("nav-route");
+      if (map.getLayer("nav-casing")) map.removeLayer("nav-casing");
+      if (map.getSource("nav-route")) map.removeSource("nav-route");
 
       map.addSource("nav-route", { type: "geojson", data: { type: "Feature", geometry: route.geometry } });
-      map.addLayer({ id: "nav-casing", type: "line", source: "nav-route",
+      map.addLayer({
+        id: "nav-casing", type: "line", source: "nav-route",
         layout: { "line-join": "round", "line-cap": "round" },
-        paint:  { "line-color": "#ffffff", "line-width": 10 } });
-      map.addLayer({ id: "nav-route", type: "line", source: "nav-route",
+        paint: { "line-color": "#ffffff", "line-width": 10 }
+      });
+      map.addLayer({
+        id: "nav-route", type: "line", source: "nav-route",
         layout: { "line-join": "round", "line-cap": "round" },
-        paint:  { "line-color": "#3b82f6", "line-width": 6 } });
+        paint: { "line-color": "#3b82f6", "line-width": 6 }
+      });
     } catch {
       setGpsError("Route calculation failed.");
     } finally {
@@ -122,9 +122,9 @@ function MapView({ destinationStation = null }) {
   // ── Clear route, restore station markers ──────────────────────────────────
   const clearNavigation = useCallback(() => {
     const map = mapRef.current;
-    if (map.getLayer("nav-route"))   map.removeLayer("nav-route");
-    if (map.getLayer("nav-casing"))  map.removeLayer("nav-casing");
-    if (map.getSource("nav-route"))  map.removeSource("nav-route");
+    if (map.getLayer("nav-route")) map.removeLayer("nav-route");
+    if (map.getLayer("nav-casing")) map.removeLayer("nav-casing");
+    if (map.getSource("nav-route")) map.removeSource("nav-route");
     if (destMarkerRef.current) { destMarkerRef.current.remove(); destMarkerRef.current = null; }
     showStationMarkers();          // ← bring back ⚡ markers
     setRouteInfo(null);
@@ -209,55 +209,69 @@ function MapView({ destinationStation = null }) {
     map.on("load", async () => {
       setMapLoaded(true);
       try {
-        // ── Use /nearby if GPS available, else /map (all stations) ───────
-        let stations = [];
-        if (userLoc) {
-          // Fetch pages until we have NEARBY_LIMIT stations
-          let page = 1, fetched = 0;
-          while (fetched < NEARBY_LIMIT) {
-            const res = await fetch(
-              `http://localhost:8000/api/stations/nearby?lat=${userLoc.lat}&lng=${userLoc.lng}&radius=${NEARBY_RADIUS_METERS}&page=${page}`
-            );
-            const data = await res.json();
-            const batch = data.stations || [];
-            stations = [...stations, ...batch];
-            fetched += batch.length;
-            if (batch.length < 20 || fetched >= data.total) break;
-            page++;
-          }
-          stations = stations.slice(0, NEARBY_LIMIT);
-        } else {
-          // No GPS — show all stations from /map (original behaviour)
-          const res = await fetch("http://localhost:8000/api/stations/map");
-          const data = await res.json();
-          stations = data.stations || [];
-        }
+        // ── Step 1: Load all stations immediately (no GPS needed) ───────
+        const res = await fetch("http://localhost:8000/api/stations/map");
+        const data = await res.json();
+        let stations = data.stations || [];
 
         setStationCount(stations.length);
 
-        stations.forEach((station) => {
-          const [sLng, sLat] = station.location.coordinates;
-          const popup = new mapboxgl.Popup({ offset: 25, maxWidth: "240px" }).setHTML(`
-            <div style="font-family:sans-serif;padding:4px 2px">
-              <p style="font-weight:700;font-size:13px;margin:0 0 2px;
-              background:linear-gradient(to right,#34d399,#0d9488);
-            -webkit-background-clip:text;
-            -webkit-text-fill-color:transparent;">
-              ${station.name}</p>
-              <p style="color:#6b7280;font-size:11px;margin:0 0 8px">${station.operator || "Unknown Operator"}</p>
-              <button
-                onclick="window.location.href='/stations/${station._id}'"
-                style="width:100%;background:linear-gradient(to top,#34d399,#0d9488);color:white;border:none;padding:6px 10px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600">
-                View Details →
-              </button>
-            </div>
-          `);
-          const marker = new mapboxgl.Marker({ element: mkStationDot() })
-            .setLngLat([sLng, sLat])
-            .setPopup(popup)
-            .addTo(map);
-          stationMarkersRef.current.push(marker);  // track for hide/show
-        });
+        const addMarkers = (stationList) => {
+          stationList.forEach((station) => {
+            const [sLng, sLat] = station.location.coordinates;
+            const popup = new mapboxgl.Popup({ offset: 25, maxWidth: "240px" }).setHTML(`
+      <div style="font-family:sans-serif;padding:4px 2px">
+        <p style="font-weight:700;font-size:13px;margin:0 0 2px;
+        background:linear-gradient(to right,#34d399,#0d9488);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;">
+        ${station.name}</p>
+        <p style="color:#6b7280;font-size:11px;margin:0 0 8px">${station.operator || "Unknown Operator"}</p>
+        <button
+          onclick="window.location.href='/stations/${station._id}'"
+          style="width:100%;background:linear-gradient(to top,#34d399,#0d9488);color:white;border:none;padding:6px 10px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600">
+          View Details →
+        </button>
+      </div>
+    `);
+            const marker = new mapboxgl.Marker({ element: mkStationDot() })
+              .setLngLat([sLng, sLat])
+              .setPopup(popup)
+              .addTo(map);
+            stationMarkersRef.current.push(marker);  // track for hide/show
+          });
+        };
+
+        addMarkers(stations);
+
+        // ── Step 2: GPS resolves → clear all markers → reload only nearby ──
+        navigator.geolocation?.getCurrentPosition(
+          async (pos) => {
+            const loc = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+            setUserLocation(loc);
+            map.flyTo({ center: [loc.lng, loc.lat], zoom: 12 });
+            placeUserMarker(loc);
+
+            try {
+              const nearbyRes = await fetch(
+                `http://localhost:8000/api/stations/map?lat=${loc.lat}&lng=${loc.lng}&radius=200000`
+              );
+              const nearbyData = await nearbyRes.json();
+
+              // Remove all existing ⚡ markers
+              stationMarkersRef.current.forEach(m => m.remove());
+              stationMarkersRef.current = [];
+
+              const nearbyStations = nearbyData.stations || [];
+              setStationCount(nearbyStations.length);
+              addMarkers(nearbyStations);  // re-add only nearby ones
+            } catch (err) {
+              console.error("Nearby stations fetch failed:", err);
+            }
+          },
+          () => { /* GPS denied — keep all-India markers as-is */ }
+        );
+
       } catch (err) {
         console.error("Stations load failed:", err);
       }

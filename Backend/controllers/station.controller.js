@@ -27,7 +27,7 @@ module.exports.getNearbyStations = async (req, res) => {
     .skip(skip)
     .limit(limit);
 
-  const total = await EVStation.countDocuments(geoFilter);
+  const total = stations.length;
 
   res.status(200).json({ success: true, page: Number(page), results: stations.length, total, stations });
 };
@@ -45,8 +45,23 @@ module.exports.getStationById = async (req, res) => {
 
 // ── GET ALL STATIONS FOR MAP ──
 module.exports.getAllStationsForMap = async (req, res) => {
-  const stations = await EVStation.find({}) // ✅ removed status: "approved"
-    .select("name location address averageRating isVerified chargers operator");
+  const { lat, lng, radius = 200000 } = req.query;
+
+  // If GPS coords provided → return only nearby stations within radius
+  const filter = lat && lng
+    ? {
+        location: {
+          $near: {
+            $geometry: { type: "Point", coordinates: [parseFloat(lng), parseFloat(lat)] },
+            $maxDistance: parseInt(radius),
+          },
+        },
+      }
+    : {}; // No GPS → return all (fallback)
+
+  const stations = await EVStation.find(filter)
+    .select("name location address averageRating isVerified chargers operator")
+    // .limit(200); // cap at 200 even in fallback
 
   res.status(200).json({ success: true, total: stations.length, stations });
 };
