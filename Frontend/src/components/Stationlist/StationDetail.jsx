@@ -296,7 +296,7 @@ function StationDetail() {
                   className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 active:scale-95
                     ${navMode
                       ? "bg-red-50 text-red-500 border border-red-100 hover:bg-red-100"
-                      : "bg-blue-500 text-white hover:bg-blue-600 shadow-sm hover:shadow-blue-200"
+                      : "bg-gradient-to-t from-emerald-400 to-teal-600 text-white hover: shadow-sm hover:shadow-blue-200 cursor-pointer"
                     }`}
                 >
                   <FontAwesomeIcon icon={faRoute} />

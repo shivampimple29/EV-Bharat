@@ -239,11 +239,15 @@ function MapView({ destinationStation = null }) {
           const [sLng, sLat] = station.location.coordinates;
           const popup = new mapboxgl.Popup({ offset: 25, maxWidth: "240px" }).setHTML(`
             <div style="font-family:sans-serif;padding:4px 2px">
-              <p style="font-weight:700;font-size:13px;margin:0 0 2px">${station.name}</p>
+              <p style="font-weight:700;font-size:13px;margin:0 0 2px;
+              background:linear-gradient(to right,#34d399,#0d9488);
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;">
+              ${station.name}</p>
               <p style="color:#6b7280;font-size:11px;margin:0 0 8px">${station.operator || "Unknown Operator"}</p>
               <button
                 onclick="window.location.href='/stations/${station._id}'"
-                style="width:100%;background:#3b82f6;color:white;border:none;padding:6px 10px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600">
+                style="width:100%;background:linear-gradient(to top,#34d399,#0d9488);color:white;border:none;padding:6px 10px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600">
                 View Details →
               </button>
             </div>
@@ -329,11 +333,11 @@ function MapView({ destinationStation = null }) {
 
       {/* ── NAVIGATION PANEL (nav mode only) ── */}
       {destinationStation && (
-        <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-30 w-[92%] max-w-sm">
+        <div className="absolute bottom-1 left-1/2 -translate-x-1/2 z-30 w-[92%] max-w-sm">
           <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-100">
 
             {/* Destination header */}
-            <div className="bg-gradient-to-r from-green-500 to-emerald-600 px-4 py-3 text-white">
+            <div className="bg-gradient-to-t from-emerald-400 to-teal-600 px-4 py-3 text-white">
               <p className="text-[10px] font-semibold uppercase tracking-widest opacity-80 mb-0.5">Destination</p>
               <p className="font-bold text-sm leading-tight truncate">{destinationStation.name}</p>
               <p className="text-xs opacity-70 mt-0.5">{destinationStation.address?.city}, {destinationStation.address?.state}</p>
@@ -363,7 +367,7 @@ function MapView({ destinationStation = null }) {
 
             {/* GPS confirmed badge */}
             {userLocation && (
-              <div className="mx-4 mb-2 bg-blue-50 rounded-xl px-3 py-2 flex items-center gap-2 text-xs text-blue-700">
+              <div className="mx-4 m-2 bg-blue-50 rounded-xl px-3 py-2 flex items-center gap-2 text-xs text-blue-700">
                 <FontAwesomeIcon icon={faLocationCrosshairs} />
                 <span className="font-medium">Your GPS location detected</span>
               </div>
@@ -373,19 +377,19 @@ function MapView({ destinationStation = null }) {
             <div className="flex gap-2 px-4 pb-4">
               {!navActive && !gpsLoading && (
                 <button onClick={startNavigation}
-                  className="flex-1 bg-blue-500 hover:bg-blue-600 active:scale-95 text-white py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all">
+                  className="flex-1 bg-gradient-to-t from-emerald-400 to-teal-600 active:scale-95 text-white py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all">
                   <FontAwesomeIcon icon={faRoute} /> Get Directions
                 </button>
               )}
               {gpsLoading && (
-                <button disabled className="flex-1 bg-blue-300 text-white py-3 rounded-xl text-sm flex items-center justify-center gap-2 cursor-not-allowed">
+                <button disabled className="flex-1 bg-emerald-300 text-white py-3 rounded-xl text-sm flex items-center justify-center gap-2 cursor-not-allowed">
                   <FontAwesomeIcon icon={faSpinner} className="animate-spin" /> Getting GPS...
                 </button>
               )}
               {navActive && !gpsLoading && (
                 <>
                   <button onClick={startNavigation}
-                    className="flex-1 bg-blue-500 hover:bg-blue-600 active:scale-95 text-white py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all">
+                    className="flex-1 bg-gradient-to-t from-emerald-400 to-teal-600 active:scale-95 text-white py-3 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all">
                     <FontAwesomeIcon icon={faRoute} /> Recalculate
                   </button>
                   <button onClick={clearNavigation}
