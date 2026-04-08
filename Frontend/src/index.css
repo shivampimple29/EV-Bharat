@@ -48,6 +48,11 @@ html {
   will-change: transform;
 }
 
+.mapboxgl-ctrl-top-right {
+  transform: scale(0.8);
+  transform-origin: top right;
+}
+
 /* Clip the entire map wrapper */
 .map-clip-wrapper {
   overflow: hidden;

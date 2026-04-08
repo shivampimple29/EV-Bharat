@@ -633,7 +633,7 @@ function MapView({ destinationStation = null, mapHeight = "h-64" }) {
         )}
 
         {/* Style picker */}
-        <div className="absolute top-4 left-4 z-20">
+        <div className="absolute top-1 left-1 z-20">
           <button onClick={() => setShowPicker(!showPicker)}
             className="bg-white shadow-md rounded-lg px-3 py-2 text-sm font-medium text-gray-700 flex items-center gap-2 hover:bg-gray-50 transition">
             <FontAwesomeIcon icon={faLayerGroup} className="text-gray-500" /> Style
@@ -651,7 +651,7 @@ function MapView({ destinationStation = null, mapHeight = "h-64" }) {
         </div>
 
         {mapLoaded && stationCount > 0 && !destinationStation && !routePlannerMode && (
-          <div className="absolute bottom-6 right-4 z-20 bg-white shadow-md rounded-full px-3 py-1.5 text-xs font-medium text-gray-600 flex items-center gap-1.5">
+          <div className="absolute bottom-1 right-1 z-20 bg-white shadow-md rounded-full px-3 py-1.5 text-xs font-medium text-gray-600 flex items-center gap-1.5">
             <FontAwesomeIcon icon={faBolt} className="text-green-500" />
             {stationCount} nearby stations
           </div>
@@ -667,7 +667,7 @@ function MapView({ destinationStation = null, mapHeight = "h-64" }) {
         {!destinationStation && mapLoaded && (
           <button
             onClick={() => routePlannerMode ? clearRoutePlanner() : setRoutePlannerMode(true)}
-            className={`absolute bottom-6 left-4 z-20 flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold shadow-md transition-all duration-200 active:scale-95
+            className={`absolute bottom-1 left-1 z-20 flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold shadow-md transition-all duration-200 active:scale-95
               ${routePlannerMode
                 ? "bg-red-500 text-white hover:bg-red-600"
                 : "bg-gradient-to-t from-emerald-400 to-teal-600 text-white hover:shadow-lg hover:shadow-emerald-200"

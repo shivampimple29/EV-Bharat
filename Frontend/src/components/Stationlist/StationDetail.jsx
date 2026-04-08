@@ -124,7 +124,7 @@ function StationDetail() {
   const maxPower = chargers.length ? Math.max(...chargers.map(c => c.power || 0)) : null;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4 md:px-8">
+    <div className="min-h-screen bg-gray-50 py-4 px-4 md:px-8">
       <div className="max-w-6xl mx-auto">
 
         {/* Back button */}
@@ -158,7 +158,7 @@ function StationDetail() {
                 </div>
               )}
 
-              <div className="p-5">
+              <div className="px-5 py-2">
 
                 {/* Status + rating */}
                 <div className="flex items-center justify-between mb-4">
@@ -201,10 +201,10 @@ function StationDetail() {
                   </span>
                 </p>
 
-                <div className="h-px bg-gradient-to-r from-emerald-100/60 via-gray-100 to-teal-100/60 mb-5" />
+                <div className="h-px bg-gradient-to-r from-emerald-100/60 via-gray-100 to-teal-100/60 mb-2" />
 
                 {/* Stats grid */}
-                <div className="grid grid-cols-3 gap-2.5 mb-5">
+                <div className="grid grid-cols-3 gap-2.5 mb-1">
                   {[
                     { icon: faPlug, value: chargerTypes.length || chargers.length, label: "Types", iconColor: "text-emerald-500", bg: "bg-emerald-50 border-emerald-100" },
                     { icon: faBolt, value: totalPorts, label: "Ports", iconColor: "text-teal-500", bg: "bg-teal-50 border-teal-100" },
@@ -299,7 +299,7 @@ function StationDetail() {
               {/* Map — expands when in nav mode */}
               <div className="w-full">
                 <MapView
-                  mapHeight={navMode ? "h-[300px]" : "h-64"}
+                  mapHeight={navMode ? "h-[325px]" : "h-75"}
                   destinationStation={navMode ? station : null}
                 />
               </div>
