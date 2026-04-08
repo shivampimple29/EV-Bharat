@@ -297,8 +297,11 @@ function StationDetail() {
               </div>
 
               {/* Map — expands when in nav mode */}
-              <div className={`w-full transition-all duration-500 ease-in-out ${navMode ? "h-[430px]" : "h-64"}`}>
-                <MapView destinationStation={navMode ? station : null} />
+              <div className="w-full">
+                <MapView
+                  mapHeight={navMode ? "h-[300px]" : "h-64"}
+                  destinationStation={navMode ? station : null}
+                />
               </div>
 
             </div>
