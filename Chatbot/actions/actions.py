@@ -5,7 +5,7 @@ from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.events import SlotSet
 
-BASE_URL = "http://localhost:8000/api/stations"
+BASE_URL = "https://ev-bharat-backend-j5s4.onrender.com/api/stations"
 
 # ── Intents that mean "select a station from the last list" ───────────────────
 SELECTION_INTENTS = {"select_station_from_list"}

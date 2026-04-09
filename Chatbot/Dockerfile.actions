@@ -1,9 +1,0 @@
-FROM python:3.10-slim
-
-WORKDIR /app
-RUN pip install --upgrade pip && pip install rasa-sdk==3.6.2
-
-COPY actions/ ./actions/
-
-EXPOSE 5055
-CMD ["python", "-m", "rasa_sdk", "--actions", "actions", "--port", "5055"]
