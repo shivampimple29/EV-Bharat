@@ -19,7 +19,7 @@ function StationApproved() {
 
   const fetchMyStation = async () => {
     try {
-      const res = await fetch("http://localhost:8000/api/stations/my-station", {
+      const res = await fetch("https://ev-bharat-backend-j5s4.onrender.com/api/stations/my-station", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();

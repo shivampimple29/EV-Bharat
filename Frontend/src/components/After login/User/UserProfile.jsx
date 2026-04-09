@@ -40,7 +40,7 @@ function UserProfile() {
     setSaving(true);
     try {
       // ⚠️ Wire up your update profile endpoint here when ready
-      // const res = await fetch(`http://localhost:8000/api/users/${user._id}`, {
+      // const res = await fetch(`https://ev-bharat-backend-j5s4.onrender.com/api/users/${user._id}`, {
       //   method: "PATCH",
       //   headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
       //   body: JSON.stringify(form),

@@ -64,7 +64,7 @@ function StationList() {
         }
 
         const response = await fetch(
-          `http://localhost:8000/api/stations?${params}`,
+          `https://ev-bharat-backend-j5s4.onrender.com/api/stations?${params}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         const data = await response.json();

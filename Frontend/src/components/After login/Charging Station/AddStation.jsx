@@ -48,7 +48,7 @@ function AddStation() {
     }
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:8000/api/stations", {
+      const res = await fetch("https://ev-bharat-backend-j5s4.onrender.com/api/stations", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

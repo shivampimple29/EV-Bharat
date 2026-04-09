@@ -90,7 +90,7 @@ export default function BookingSection({ station }) {
       const token = localStorage.getItem("token");
       if (!token) { setFormError("Please log in to book a slot."); return; }
 
-      const res = await fetch("http://localhost:8000/api/bookings", {
+      const res = await fetch("https://ev-bharat-backend-j5s4.onrender.com/api/bookings", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({
@@ -118,7 +118,7 @@ export default function BookingSection({ station }) {
     setPayLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:8000/api/bookings/${booking._id}/pay`, {
+      const res = await fetch(`https://ev-bharat-backend-j5s4.onrender.com/api/bookings/${booking._id}/pay`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ paymentMethod: selectedPay.label }),

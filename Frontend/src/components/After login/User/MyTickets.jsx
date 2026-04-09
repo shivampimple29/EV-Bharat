@@ -69,7 +69,7 @@ export default function MyTickets() {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const res   = await fetch("http://localhost:8000/api/bookings/my", {
+      const res   = await fetch("https://ev-bharat-backend-j5s4.onrender.com/api/bookings/my", {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data  = await res.json();
@@ -88,7 +88,7 @@ export default function MyTickets() {
     setPayLoad(true);
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:8000/api/bookings/${payModal._id}/pay`, {
+      const res = await fetch(`https://ev-bharat-backend-j5s4.onrender.com/api/bookings/${payModal._id}/pay`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({ paymentMethod: selPay.label }),
@@ -105,7 +105,7 @@ export default function MyTickets() {
     if (!window.confirm("Cancel this booking?")) return;
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch(`http://localhost:8000/api/bookings/${id}`, {
+      const res = await fetch(`https://ev-bharat-backend-j5s4.onrender.com/api/bookings/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });

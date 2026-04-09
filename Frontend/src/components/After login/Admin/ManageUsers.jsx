@@ -36,7 +36,7 @@ function ManageUsers() {
     setLoading(true);
     try {
       const params = new URLSearchParams({ page, search, role: roleFilter, status: statusFilter });
-      const res = await fetch(`http://localhost:8000/api/users?${params}`, {
+      const res = await fetch(`https://ev-bharat-backend-j5s4.onrender.com/api/users?${params}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -58,7 +58,7 @@ function ManageUsers() {
   const handleRoleChange = async (id, role) => {
     setActionLoading(id + "_role");
     try {
-      const res = await fetch(`http://localhost:8000/api/users/${id}/role`, {
+      const res = await fetch(`https://ev-bharat-backend-j5s4.onrender.com/api/users/${id}/role`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -80,7 +80,7 @@ function ManageUsers() {
   const handleStatusChange = async (id, status) => {
     setActionLoading(id + "_status");
     try {
-      const res = await fetch(`http://localhost:8000/api/users/${id}/status`, {
+      const res = await fetch(`https://ev-bharat-backend-j5s4.onrender.com/api/users/${id}/status`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -103,7 +103,7 @@ function ManageUsers() {
     setActionLoading(id + "_delete");
     setConfirmDelete(null);
     try {
-      const res = await fetch(`http://localhost:8000/api/users/${id}`, {
+      const res = await fetch(`https://ev-bharat-backend-j5s4.onrender.com/api/users/${id}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });

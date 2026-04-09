@@ -33,7 +33,7 @@ function ManageStations() {
     setLoading(true);
     try {
       const params = new URLSearchParams({ page, search });
-      const res = await fetch(`http://localhost:8000/api/stations?${params}`, {
+      const res = await fetch(`https://ev-bharat-backend-j5s4.onrender.com/api/stations?${params}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -61,7 +61,7 @@ function ManageStations() {
     setActionLoading(id + "_approve");
     try {
       // ⚠️ Uncomment once you add the route:
-      // await fetch(`http://localhost:8000/api/stations/${id}/approve`, {
+      // await fetch(`https://ev-bharat-backend-j5s4.onrender.com/api/stations/${id}/approve`, {
       //   method: "PATCH",
       //   headers: { Authorization: `Bearer ${token}` },
       // });
@@ -78,7 +78,7 @@ function ManageStations() {
     setActionLoading(id + "_reject");
     try {
       // ⚠️ Uncomment once you add the route:
-      // await fetch(`http://localhost:8000/api/stations/${id}/reject`, {
+      // await fetch(`https://ev-bharat-backend-j5s4.onrender.com/api/stations/${id}/reject`, {
       //   method: "PATCH",
       //   headers: { Authorization: `Bearer ${token}` },
       // });

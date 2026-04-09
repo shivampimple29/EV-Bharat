@@ -8,7 +8,7 @@ import {
   faRotateRight,
 } from "@fortawesome/free-solid-svg-icons";
 
-const RASA_URL = "http://localhost:5005/webhooks/rest/webhook";
+const RASA_URL = "https://shivampimple29-evassistant.hf.space/webhooks/rest/webhook";
 const SENDER_ID = "ev_user_" + Math.random().toString(36).slice(2, 9);
 
 // Quick-suggest chips shown at start
@@ -58,7 +58,7 @@ function Chatbot() {
 
   // Check RASA reachability
   useEffect(() => {
-    fetch("http://localhost:5005/")
+    fetch("https://shivampimple29-evassistant.hf.space/")
       .then(() => setOnline(true))
       .catch(() => setOnline(false));
   }, []);

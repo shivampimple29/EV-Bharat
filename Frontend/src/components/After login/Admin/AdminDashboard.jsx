@@ -34,8 +34,8 @@ function AdminDashboard() {
       const headers = { Authorization: `Bearer ${token}` };
 
       const [stationsRes, usersRes] = await Promise.all([
-        fetch("http://localhost:8000/api/stations?page=1", { headers }),
-        fetch("http://localhost:8000/api/users?page=1", { headers }),
+        fetch("https://ev-bharat-backend-j5s4.onrender.com/api/stations?page=1", { headers }),
+        fetch("https://ev-bharat-backend-j5s4.onrender.com/api/users?page=1", { headers }),
       ]);
 
       const stationsData = await stationsRes.json();
@@ -64,7 +64,7 @@ function AdminDashboard() {
     setActionLoading(id);
     try {
       // ⚠️ Placeholder — wire up your approve endpoint here
-      // await fetch(`http://localhost:8000/api/stations/${id}/approve`, {
+      // await fetch(`https://ev-bharat-backend-j5s4.onrender.com/api/stations/${id}/approve`, {
       //   method: "PATCH",
       //   headers: { Authorization: `Bearer ${token}` },
       // });

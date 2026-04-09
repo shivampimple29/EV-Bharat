@@ -15,7 +15,7 @@ export default function BookSlotPage() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    fetch(`http://localhost:8000/api/stations/${id}`)
+    fetch(`https://ev-bharat-backend-j5s4.onrender.com/api/stations/${id}`)
       .then(r => { if (!r.ok) throw new Error("Not found"); return r.json(); })
       .then(d  => setStation(d.station || null))
       .catch(e => setError(e.message))

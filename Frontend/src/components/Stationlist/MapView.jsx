@@ -309,7 +309,7 @@ function MapView({ destinationStation = null, mapHeight = "h-64" }) {
       const bufferKm        = Math.max(10, Math.ceil(routeDistanceKm / 100));
 
       const token = localStorage.getItem("token");
-      const stRes = await fetch("http://localhost:8000/api/stations/along-route", {
+      const stRes = await fetch("https://ev-bharat-backend-j5s4.onrender.com/api/stations/along-route", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -484,7 +484,7 @@ function MapView({ destinationStation = null, mapHeight = "h-64" }) {
     map.on("load", async () => {
       setMapLoaded(true);
       try {
-        const res      = await fetch("http://localhost:8000/api/stations/map");
+        const res      = await fetch("https://ev-bharat-backend-j5s4.onrender.com/api/stations/map");
         const data     = await res.json();
         const stations = data.stations || [];
         setStationCount(stations.length);
@@ -566,7 +566,7 @@ function MapView({ destinationStation = null, mapHeight = "h-64" }) {
             map.flyTo({ center: [loc.lng, loc.lat], zoom: 12 });
             placeUserMarker(loc);
             try {
-              const nearbyRes  = await fetch(`http://localhost:8000/api/stations/map?lat=${loc.lat}&lng=${loc.lng}&radius=200000`);
+              const nearbyRes  = await fetch(`https://ev-bharat-backend-j5s4.onrender.com/api/stations/map?lat=${loc.lat}&lng=${loc.lng}&radius=200000`);
               const nearbyData = await nearbyRes.json();
               stationMarkersRef.current.forEach(m => m.remove());
               stationMarkersRef.current = [];

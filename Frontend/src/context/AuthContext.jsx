@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
     const fetchMe = async () => {
       if (!token) { setLoading(false); return; }
       try {
-        const res  = await fetch("http://localhost:8000/api/auth/me", { 
+        const res  = await fetch("https://ev-bharat-backend-j5s4.onrender.com/api/auth/me", { 
           headers: { Authorization: `Bearer ${token}` },
         });
         const data = await res.json();

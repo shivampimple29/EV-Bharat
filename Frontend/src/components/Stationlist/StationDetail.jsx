@@ -50,7 +50,7 @@ function StationDetail() {
     const fetchStation = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`http://localhost:8000/api/stations/${id}`);
+        const response = await fetch(`https://ev-bharat-backend-j5s4.onrender.com/api/stations/${id}`);
         const result = await response.json();
         setStation(result.station || null);
       } catch (err) {
@@ -63,7 +63,7 @@ function StationDetail() {
 
     const fetchReviews = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/api/stations/${id}/reviews`);
+        const res = await fetch(`https://ev-bharat-backend-j5s4.onrender.com/api/stations/${id}/reviews`);
         const data = await res.json();
         setReviews(data.reviews || []);
       } catch (err) {
