@@ -133,13 +133,4 @@ EV Bharat demonstrates the ability to build and deploy a real-world full-stack p
 
 ---
 
-## 🌐 Connect With Us
-
-[![Twitter](https://img.shields.io/badge/Twitter-@Ev__Bharat-1DA1F2?style=flat-square&logo=twitter)](https://x.com/Ev_Bharat)
-[![Instagram](https://img.shields.io/badge/Instagram-@ev__bharat-E4405F?style=flat-square&logo=instagram)](https://www.instagram.com/ev__bharat/)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-EV%20Bharat-0077B5?style=flat-square&logo=linkedin)](https://www.linkedin.com/in/ev-bharat-6343033bb/)
-[![Email](https://img.shields.io/badge/Email-evbharatindia@gmail.com-D14836?style=flat-square&logo=gmail)](mailto:evbharatindia@gmail.com)
-
----
-
 ⭐ **Focused on geospatial engineering, AI integration, cloud deployment, and real-world impact.**
